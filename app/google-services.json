@@ -1,0 +1,48 @@
+{
+  "project_info": {
+    "project_number": "492065819431",
+    "firebase_url": "https://chatmate-baf5b-default-rtdb.firebaseio.com",
+    "project_id": "chatmate-baf5b",
+    "storage_bucket": "chatmate-baf5b.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:492065819431:android:62a38667f78dfc70747702",
+        "android_client_info": {
+          "package_name": "com.example.industrio"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "492065819431-nauiko9aikttv4am0mdth42f9jdrvi5n.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.example.industrio",
+            "certificate_hash": "f7c293d3b2661419a62dbe21beb0efea4c8beb16"
+          }
+        },
+        {
+          "client_id": "492065819431-7858gse30ae80gqt31a4qq61hjr469bs.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCjwDuBghRj1MFhoyEAinudoYytOfFdwYE"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "492065819431-7858gse30ae80gqt31a4qq61hjr469bs.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
