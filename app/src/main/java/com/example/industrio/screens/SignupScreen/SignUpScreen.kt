@@ -48,6 +48,13 @@ fun SignUpScreen(navController: NavController, signUpViewModel: SignUpViewModel 
         }
     }
 
+//    Image(
+//        painter = painterResource(id = R.drawable.artboard_1),
+//        contentDescription = "My Image",
+//        modifier = Modifier
+//            .fillMaxWidth()
+//    )
+
     Column(
         modifier = Modifier
             .fillMaxSize()
@@ -58,6 +65,16 @@ fun SignUpScreen(navController: NavController, signUpViewModel: SignUpViewModel 
             text = "Sign Up",
             style = MaterialTheme.typography.h4,
             modifier = Modifier.padding(bottom = 16.dp)
+        )
+        OutlinedTextField(
+            value = signUpViewModel.name,
+            onValueChange = { signUpViewModel.name = it },
+            label = { Text("Name") },
+            keyboardOptions = KeyboardOptions(
+                keyboardType = KeyboardType.Text,
+                imeAction = ImeAction.Next
+            ),
+            modifier = Modifier.fillMaxWidth()
         )
         OutlinedTextField(
             value = signUpViewModel.email,
@@ -77,6 +94,21 @@ fun SignUpScreen(navController: NavController, signUpViewModel: SignUpViewModel 
                 keyboardType = KeyboardType.Password,
                 imeAction = ImeAction.Done
             ),
+
+            visualTransformation = PasswordVisualTransformation(),
+            modifier = Modifier
+                .fillMaxWidth()
+        )
+
+        OutlinedTextField(
+            value = signUpViewModel.cpassword,
+            onValueChange = { signUpViewModel.cpassword = it },
+            label = { Text("Password") },
+            keyboardOptions = KeyboardOptions(
+                keyboardType = KeyboardType.Password,
+                imeAction = ImeAction.Done
+            ),
+
             visualTransformation = PasswordVisualTransformation(),
             modifier = Modifier
                 .fillMaxWidth()

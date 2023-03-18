@@ -14,17 +14,21 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.sp
 import android.content.Context
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material.icons.outlined.*
 import androidx.compose.runtime.*
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.Font
 import androidx.compose.ui.text.font.FontFamily
@@ -85,7 +89,7 @@ fun TrackScreenPreview() {
 
 
 @Composable
-fun BooksScreen() {
+fun ForumScreen() {
     Column(
         modifier = Modifier
             .fillMaxSize()
@@ -93,7 +97,7 @@ fun BooksScreen() {
             .wrapContentSize(Alignment.Center)
     ) {
         Text(
-            text = "Books View",
+            text = "Forum View",
             fontWeight = FontWeight.Bold,
             color = Color.White,
             modifier = Modifier.align(Alignment.CenterHorizontally),
@@ -106,12 +110,11 @@ fun BooksScreen() {
 @Preview(showBackground = true)
 @Composable
 fun BooksScreenPreview() {
-    BooksScreen()
+    ForumScreen()
 }
 
 @Composable
 fun ProfileScreen() {
-    TopAppbarProfile(context = LocalContext.current.applicationContext)
     Column(
         modifier = Modifier
             .fillMaxSize()
@@ -129,31 +132,6 @@ fun ProfileScreenPreview() {
 }
 
 private val optionsList: ArrayList<OptionsData> = ArrayList()
-
-@Composable
-fun TopAppbarProfile(context: Context) {
-    TopAppBar(
-        title = {
-            Text(
-                text = "Profile",
-                maxLines = 1,
-                overflow = TextOverflow.Ellipsis
-            )
-        },
-        backgroundColor = MaterialTheme.colors.background,
-        elevation = 4.dp,
-        navigationIcon = {
-            IconButton(onClick = {
-
-            }) {
-                Icon(
-                    Icons.Filled.ArrowBack,
-                    contentDescription = "Go back",
-                )
-            }
-        }
-    )
-}
 
 @Composable
 fun ProfileEcommerce(context: Context = LocalContext.current.applicationContext) {
@@ -207,7 +185,13 @@ private fun UserDetails(context: Context) {
     ) {
 
         // User's image
-
+        Image(
+            modifier = Modifier
+                .size(72.dp)
+                .clip(shape = CircleShape),
+            painter = painterResource(id = com.example.industrio.R.drawable.victoria),
+            contentDescription = "Your Image"
+        )
 
         Row(
             modifier = Modifier.fillMaxWidth(),

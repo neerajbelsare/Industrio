@@ -16,8 +16,11 @@ import kotlinx.coroutines.launch
 import kotlinx.coroutines.tasks.await
 
 class SignUpViewModel : ViewModel() {
+    var name by mutableStateOf("")
     var email by mutableStateOf("")
     var password by mutableStateOf("")
+    var cpassword by mutableStateOf("")
+
     var isLoading by mutableStateOf(false)
     var isError by mutableStateOf(false)
     var isEmpty by mutableStateOf(false)
@@ -32,7 +35,7 @@ class SignUpViewModel : ViewModel() {
 
         user = FirebaseAuth.getInstance()
 
-        if(email.isNotEmpty() && password.isNotEmpty()){
+        if(email.isNotEmpty() && password.isNotEmpty() && cpassword.isNotEmpty() && name.isNotEmpty()){
             user.createUserWithEmailAndPassword(email,password).addOnCompleteListener(MainActivity()){
                     task ->
                 if(task.isSuccessful){
