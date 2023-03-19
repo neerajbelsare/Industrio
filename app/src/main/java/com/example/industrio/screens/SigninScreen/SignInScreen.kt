@@ -50,6 +50,13 @@ fun SignInScreen(navController: NavController, signInViewModel: SignInViewModel 
         }
     }
 
+        Image(
+            painter = painterResource(id = R.drawable.artboard_1),
+            contentDescription = "My Image",
+            modifier = Modifier
+                .fillMaxWidth()
+        )
+
     Column(
         modifier = Modifier
             .fillMaxSize()

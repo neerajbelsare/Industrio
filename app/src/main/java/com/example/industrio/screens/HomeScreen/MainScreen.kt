@@ -40,12 +40,14 @@ fun Navigation(navController: NavHostController) {
             HomeScreen()
         }
 
-        composable(NavigationItem.Movies.route) {
+        composable(NavigationItem.Forum.route) {
+            ForumScreen()
+        }
+
+        composable(NavigationItem.Track.route) {
             TrackScreen()
         }
-        composable(NavigationItem.Books.route) {
-            BooksScreen()
-        }
+
         composable(NavigationItem.Profile.route) {
             ProfileScreen()
         }
@@ -56,9 +58,8 @@ fun Navigation(navController: NavHostController) {
 fun BottomNavigationBar(navController: NavController) {
     val items = listOf(
         NavigationItem.Home,
-        NavigationItem.Music,
-        NavigationItem.Movies,
-        NavigationItem.Books,
+        NavigationItem.Forum,
+        NavigationItem.Track,
         NavigationItem.Profile
     )
     BottomNavigation(
@@ -95,124 +96,3 @@ fun BottomNavigationBar(navController: NavController) {
         }
     }
 }
-
-//@Composable
-//fun HomeScreen() {
-//    Column(
-//        modifier = Modifier
-//            .fillMaxSize()
-//            .wrapContentSize(Alignment.Center)
-//    ) {
-//        Text(
-//            text = "Home View",
-//            fontWeight = FontWeight.Bold,
-//            color = Color.White,
-//            modifier = Modifier.align(Alignment.CenterHorizontally),
-//            textAlign = TextAlign.Center,
-//            fontSize = 25.sp
-//        )
-//    }
-//}
-//
-//@Preview(showBackground = true)
-//@Composable
-//fun HomeScreenPreview() {
-//    HomeScreen()
-//}
-//
-//@Composable
-//fun MusicScreen() {
-//    Column(
-//        modifier = Modifier
-//            .fillMaxSize()
-//            .wrapContentSize(Alignment.Center)
-//    ) {
-//        Text(
-//            text = "Music View",
-//            fontWeight = FontWeight.Bold,
-//            color = Color.White,
-//            modifier = Modifier.align(Alignment.CenterHorizontally),
-//            textAlign = TextAlign.Center,
-//            fontSize = 25.sp
-//        )
-//    }
-//}
-//
-//@Preview(showBackground = true)
-//@Composable
-//fun MusicScreenPreview() {
-//    MusicScreen()
-//}
-//
-//@Composable
-//fun MoviesScreen() {
-//    Column(
-//        modifier = Modifier
-//            .fillMaxSize()
-//            .wrapContentSize(Alignment.Center)
-//    ) {
-//        Text(
-//            text = "Movies View",
-//            fontWeight = FontWeight.Bold,
-//            color = Color.White,
-//            modifier = Modifier.align(Alignment.CenterHorizontally),
-//            textAlign = TextAlign.Center,
-//            fontSize = 25.sp
-//        )
-//    }
-//}
-//
-//@Preview(showBackground = true)
-//@Composable
-//fun MoviesScreenPreview() {
-//    MoviesScreen()
-//}
-//
-//
-//@Composable
-//fun BooksScreen() {
-//    Column(
-//        modifier = Modifier
-//            .fillMaxSize()
-//            .wrapContentSize(Alignment.Center)
-//    ) {
-//        Text(
-//            text = "Books View",
-//            fontWeight = FontWeight.Bold,
-//            color = Color.White,
-//            modifier = Modifier.align(Alignment.CenterHorizontally),
-//            textAlign = TextAlign.Center,
-//            fontSize = 25.sp
-//        )
-//    }
-//}
-//
-//@Preview(showBackground = true)
-//@Composable
-//fun BooksScreenPreview() {
-//    BooksScreen()
-//}
-//
-//@Composable
-//fun ProfileScreen() {
-//    Column(
-//        modifier = Modifier
-//            .fillMaxSize()
-//            .wrapContentSize(Alignment.Center)
-//    ) {
-//        Text(
-//            text = "Profile View",
-//            fontWeight = FontWeight.Bold,
-//            color = Color.White,
-//            modifier = Modifier.align(Alignment.CenterHorizontally),
-//            textAlign = TextAlign.Center,
-//            fontSize = 25.sp
-//        )
-//    }
-//}
-//
-//@Preview(showBackground = true)
-//@Composable
-//fun ProfileScreenPreview() {
-//    ProfileScreen()
-//}
