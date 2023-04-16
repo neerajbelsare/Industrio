@@ -34,6 +34,8 @@ import androidx.compose.ui.text.font.Font
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
+import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.ktx.Firebase
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 
@@ -257,6 +259,10 @@ private fun OptionsItemStyle(item: OptionsData, context: Context) {
         modifier = Modifier
             .fillMaxWidth()
             .clickable(enabled = true) {
+                if(item.title == "Sign Out")
+                {
+                    FirebaseAuth.getInstance().signOut();
+                }
 
             }
             .padding(all = 16.dp),
@@ -367,7 +373,7 @@ private fun prepareOptionsData() {
 
     optionsList.add(
         OptionsData(
-            icon = appIcons.Settings,
+            icon = appIcons.Info,
             title = "Help Center",
             subTitle = "FAQs and customer support"
         )
@@ -386,6 +392,13 @@ private fun prepareOptionsData() {
             icon = appIcons.FavoriteBorder,
             title = "Wishlist",
             subTitle = "Items you saved"
+        )
+    )
+    optionsList.add(
+        OptionsData(
+            icon = appIcons.ExitToApp,
+            title = "Sign Out",
+            subTitle = "Switch the account"
         )
     )
 }
