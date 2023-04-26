@@ -37,7 +37,7 @@ fun Home(navController: NavController) {
 fun Navigation(navController: NavHostController) {
     NavHost(navController, startDestination = NavigationItem.Home.route) {
         composable(NavigationItem.Home.route) {
-            HomeScreen()
+            HomeScreen(navController)
         }
 
         composable(NavigationItem.Forum.route) {
@@ -49,7 +49,7 @@ fun Navigation(navController: NavHostController) {
         }
 
         composable(NavigationItem.Profile.route) {
-            ProfileScreen()
+            ProfileScreen(navController)
         }
     }
 }

@@ -1,7 +1,6 @@
 package com.example.industrio.screens.HomeScreen
 
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.R
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.material.Text
@@ -22,7 +21,6 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material.icons.outlined.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.draw.clip
@@ -34,11 +32,15 @@ import androidx.compose.ui.text.font.Font
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
+import androidx.navigation.NavController
+import androidx.navigation.NavHostController
+import com.example.industrio.navigation.Screens
+import com.google.firebase.auth.FirebaseAuth
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 
 @Composable
-fun HomeScreen() {
+fun HomeScreen(navController: NavHostController) {
     Column(
         modifier = Modifier
             .fillMaxSize()
@@ -54,12 +56,6 @@ fun HomeScreen() {
             fontSize = 25.sp
         )
     }
-}
-
-@Preview(showBackground = true)
-@Composable
-fun HomeScreenPreview() {
-    HomeScreen()
 }
 
 @Composable
@@ -114,7 +110,7 @@ fun BooksScreenPreview() {
 }
 
 @Composable
-fun ProfileScreen() {
+fun ProfileScreen(navController: NavHostController) {
     Column(
         modifier = Modifier
             .fillMaxSize()
@@ -123,12 +119,6 @@ fun ProfileScreen() {
     ) {
         ProfileEcommerce()
     }
-}
-
-@Preview(showBackground = true)
-@Composable
-fun ProfileScreenPreview() {
-    ProfileScreen()
 }
 
 private val optionsList: ArrayList<OptionsData> = ArrayList()
@@ -257,6 +247,13 @@ private fun OptionsItemStyle(item: OptionsData, context: Context) {
         modifier = Modifier
             .fillMaxWidth()
             .clickable(enabled = true) {
+                if(item.title == "Sign Out")
+                {
+                    FirebaseAuth.getInstance().signOut();
+
+
+
+                }
 
             }
             .padding(all = 16.dp),
@@ -367,7 +364,7 @@ private fun prepareOptionsData() {
 
     optionsList.add(
         OptionsData(
-            icon = appIcons.Settings,
+            icon = appIcons.Info,
             title = "Help Center",
             subTitle = "FAQs and customer support"
         )
@@ -386,6 +383,13 @@ private fun prepareOptionsData() {
             icon = appIcons.FavoriteBorder,
             title = "Wishlist",
             subTitle = "Items you saved"
+        )
+    )
+    optionsList.add(
+        OptionsData(
+            icon = appIcons.ExitToApp,
+            title = "Sign Out",
+            subTitle = "Switch the account"
         )
     )
 }
