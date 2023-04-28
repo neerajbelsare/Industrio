@@ -1,5 +1,6 @@
 package com.example.industrio.screens.HomeScreen
 
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.wrapContentSize
@@ -10,45 +11,328 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.sp
 import android.content.Context
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.interaction.collectIsDraggedAsState
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.CalendarToday
+import androidx.compose.material.icons.filled.CameraAlt
+import androidx.compose.material.icons.filled.Home
+import androidx.compose.material.icons.filled.Mail
+import androidx.compose.material.icons.filled.Person
+import androidx.compose.material.icons.filled.Phone
+import androidx.compose.material.icons.filled.PlayArrow
+import androidx.compose.material.icons.filled.Search
+import androidx.compose.material.icons.filled.Settings
 import androidx.compose.material.icons.outlined.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.Font
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.style.TextOverflow
+import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
-import androidx.navigation.NavHostController
-import com.example.industrio.navigation.Screens
-import com.google.firebase.auth.FirebaseAuth
+import coil.compose.AsyncImage
+import coil.request.ImageRequest
+import com.bumptech.glide.integration.compose.ExperimentalGlideComposeApi
+import com.bumptech.glide.integration.compose.GlideImage
+import com.example.industrio.R
+import com.example.industrio.ui.theme.MainColor
+import com.example.industrio.navigation.Profile
+import com.example.industrio.navigation.nav_graph.Graph
+import com.google.accompanist.pager.ExperimentalPagerApi
+import com.google.accompanist.pager.HorizontalPager
+import com.google.accompanist.pager.PagerState
+import com.valentinilk.shimmer.shimmer
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.withContext
 
 @Composable
-fun HomeScreen(navController: NavHostController) {
+fun IndicatorDot(
+    modifier: Modifier = Modifier,
+    size: Dp,
+    color: Color
+) {
+    Box(
+        modifier = modifier
+            .size(size)
+            .clip(CircleShape)
+            .background(color)
+    )
+}
+
+@Composable
+fun DotsIndicator(
+    modifier: Modifier = Modifier,
+    totalDots: Int,
+    selectedIndex: Int,
+    selectedColor: Color = MainColor,
+    unSelectedColor: Color = Color.Gray,
+    dotSize: Dp
+) {
+    LazyRow(
+        modifier = modifier
+            .wrapContentWidth()
+            .wrapContentHeight()
+    ) {
+        items(totalDots) { index ->
+            IndicatorDot(
+                color = if (index == selectedIndex) selectedColor else unSelectedColor,
+                size = dotSize
+            )
+
+            if (index != totalDots - 1) {
+                Spacer(modifier = Modifier.padding(horizontal = 2.dp))
+            }
+        }
+    }
+}
+
+@OptIn(ExperimentalPagerApi::class)
+@Composable
+fun AutoSlidingCarousel(
+    modifier: Modifier = Modifier,
+    autoSlideDuration: Long = 4000,
+    pagerState: PagerState = remember { PagerState() },
+    itemsCount: Int,
+    itemContent: @Composable (index: Int) -> Unit,
+) {
+    val isDragged by pagerState.interactionSource.collectIsDraggedAsState()
+
+    LaunchedEffect(pagerState.currentPage) {
+        delay(autoSlideDuration)
+        pagerState.animateScrollToPage((pagerState.currentPage + 1) % itemsCount)
+    }
+
+    Box(
+        modifier = modifier.fillMaxWidth(),
+    ) {
+        HorizontalPager(count = itemsCount, state = pagerState) { page ->
+            itemContent(page)
+        }
+
+        // you can remove the surface in case you don't want
+        // the transparant bacground
+        Surface(
+            modifier = Modifier
+                .padding(bottom = 8.dp)
+                .align(Alignment.BottomCenter),
+            shape = CircleShape,
+            color = Color.Black.copy(alpha = 0.5f)
+        ) {
+            DotsIndicator(
+                modifier = Modifier.padding(horizontal = 8.dp, vertical = 6.dp),
+                totalDots = itemsCount,
+                selectedIndex = if (isDragged) pagerState.currentPage else pagerState.targetPage,
+                dotSize = 8.dp
+            )
+        }
+    }
+}
+@Composable
+fun GridItem(icon: ImageVector, text: String) {
+    Column(
+        modifier = Modifier.padding(18.dp),
+        horizontalAlignment = Alignment.CenterHorizontally
+    ) {
+        Icon(icon, contentDescription = text )
+        Text(text = text,
+        modifier = Modifier,
+        fontSize = 12.sp,
+        color = Color(0xFF2F365C)
+        )
+    }
+}
+
+
+@OptIn(ExperimentalPagerApi::class)
+@Composable
+fun HomeScreen(navController: NavController) {
+    val scrollState = rememberScrollState()
     Column(
         modifier = Modifier
             .fillMaxSize()
-//            .background(colorResource(id = R.color.colorPrimaryDark))
+            .verticalScroll(state = scrollState),
+        horizontalAlignment = Alignment.CenterHorizontally,
+    ) {
+        Spacer(modifier = Modifier
+            .height(50.dp))
+        Row(modifier = Modifier
+            .padding(start = 15.dp, end = 15.dp)
+            .clip(
+                RoundedCornerShape(
+                    topStart = 16.dp,
+                    topEnd = 16.dp
+                )
+            )
+            .fillMaxWidth()
+            .background(color = Color.White)) {
+            Spacer(Modifier.weight(0.3f))
+            GridItem(icon = Icons.Filled.Home, text = "Chat with Doctor")
+            Spacer(Modifier.weight(1f))
+            GridItem(icon = Icons.Filled.Settings, text = "Find Labs and Pharmacies")
+            Spacer(Modifier.weight(1f))
+            GridItem(icon = Icons.Filled.Person, text = "View Articles")
+            Spacer(Modifier.weight(0.3f))
+        }
+        Row(modifier = Modifier
+            .padding(start = 15.dp, end = 15.dp)
+            .fillMaxWidth()
+            .background(color = Color.White)) {
+            Spacer(Modifier.weight(0.3f))
+            GridItem(icon = Icons.Filled.Search, text = "Buy Medicines")
+            Spacer(Modifier.weight(0.9f))
+            GridItem(icon = Icons.Filled.Mail, text = "Mail")
+            Spacer(Modifier.weight(1f))
+            GridItem(icon = Icons.Filled.Phone, text = "Phone")
+            Spacer(Modifier.weight(0.3f))
+        }
+        Row(modifier = Modifier
+            .padding(start = 15.dp, end = 15.dp)
+            .clip(
+                RoundedCornerShape(
+                    bottomStart = 16.dp,
+                    bottomEnd = 16.dp
+                )
+            )
+            .fillMaxWidth()
+            .background(color = Color.White)) {
+            GridItem(icon = Icons.Filled.CalendarToday, text = "Calendar")
+            Spacer(Modifier.weight(0.7f))
+            GridItem(icon = Icons.Filled.CameraAlt, text = "Camera")
+            Spacer(Modifier.weight(1f))
+            GridItem(icon = Icons.Filled.PlayArrow, text = "Play")
+            Spacer(Modifier.weight(0.3f))
+        }
+
+        Spacer(modifier = Modifier.height(20.dp))
+
+        val images = listOf(
+            R.drawable.feature1, R.drawable.feature2, R.drawable.feature3, R.drawable.feature4
+        )
+
+        Card(
+            modifier = Modifier.padding(16.dp),
+            shape = RoundedCornerShape(16.dp),
+        ) {
+            AutoSlidingCarousel(
+                itemsCount = images.size,
+                itemContent = { index ->
+                    AsyncImage(
+                        model = ImageRequest.Builder(LocalContext.current)
+                            .data(images[index])
+                            .build(),
+                        contentDescription = null,
+                        contentScale = ContentScale.Crop,
+                        modifier = Modifier.height(200.dp)
+                    )
+                }
+            )
+        }
+
+        Card(
+            modifier = Modifier
+                .padding(start = 15.dp, end = 15.dp, top = 3.dp, bottom = 5.dp)
+                .clip(RoundedCornerShape(16.dp))
+                .fillMaxWidth(),
+            elevation = 10.dp,
+        ) {
+            Image(painter = painterResource(id = R.drawable.card_special), contentDescription = null)
+        }
+
+        Card(
+            modifier = Modifier
+                .padding(start = 15.dp, end = 15.dp, top = 10.dp)
+                .clip(RoundedCornerShape(16.dp))
+                .fillMaxWidth(),
+            elevation = 10.dp,
+        ) {
+            Image(painter = painterResource(id = R.drawable.card1), contentDescription = null)
+        }
+
+        Card(
+            modifier = Modifier
+                .padding(start = 15.dp, end = 15.dp, top = 20.dp)
+                .clip(RoundedCornerShape(16.dp))
+                .fillMaxWidth(),
+            elevation = 10.dp,
+        ) {
+            Image(painter = painterResource(id = R.drawable.card2), contentDescription = null)
+        }
+
+        Card(
+            modifier = Modifier
+                .padding(start = 15.dp, end = 15.dp, top = 20.dp)
+                .clip(RoundedCornerShape(16.dp))
+                .fillMaxWidth(),
+            elevation = 10.dp,
+        ) {
+            Image(painter = painterResource(id = R.drawable.card3), contentDescription = null)
+        }
+
+        Card(
+            modifier = Modifier
+                .padding(start = 15.dp, end = 15.dp, top = 20.dp)
+                .clip(RoundedCornerShape(16.dp))
+                .fillMaxWidth(),
+            elevation = 10.dp,
+        ) {
+            Image(painter = painterResource(id = R.drawable.card4), contentDescription = null)
+        }
+
+        Card(
+            modifier = Modifier
+                .padding(start = 15.dp, end = 15.dp, top = 20.dp)
+                .clip(RoundedCornerShape(16.dp))
+                .fillMaxWidth(),
+            elevation = 10.dp,
+        ) {
+            Image(painter = painterResource(id = R.drawable.card5), contentDescription = null)
+        }
+
+        Card(
+            modifier = Modifier
+                .padding(start = 15.dp, end = 15.dp, top = 20.dp)
+                .clip(RoundedCornerShape(16.dp))
+                .fillMaxWidth(),
+            elevation = 10.dp,
+        ) {
+            Image(painter = painterResource(id = R.drawable.card6), contentDescription = null)
+        }
+
+        Spacer(modifier = Modifier
+            .height(80.dp))
+    }
+}
+
+@Composable
+fun ChatScreen(navController: NavController) {
+    Column(
+        modifier = Modifier
+            .fillMaxSize()
             .wrapContentSize(Alignment.Center)
     ) {
         Text(
-            text = "Home View",
+            text = "Music View",
             fontWeight = FontWeight.Bold,
             color = Color.White,
             modifier = Modifier.align(Alignment.CenterHorizontally),
@@ -59,73 +343,40 @@ fun HomeScreen(navController: NavHostController) {
 }
 
 @Composable
-fun TrackScreen() {
+fun ExploreScreen(navController: NavController) {
     Column(
         modifier = Modifier
             .fillMaxSize()
-//            .background(colorResource(id = R.color.colorPrimaryDark))
             .wrapContentSize(Alignment.Center)
     ) {
-        Text(
-            text = "Track View",
-            fontWeight = FontWeight.Bold,
-            color = Color.White,
-            modifier = Modifier.align(Alignment.CenterHorizontally),
-            textAlign = TextAlign.Center,
-            fontSize = 25.sp
-        )
+        Button(
+            onClick = {},
+            modifier = Modifier
+                .height(40.dp),
+            shape = RoundedCornerShape(40.dp)
+        ) {
+            Text(
+                text = "Go to Map"
+            )
+        }
     }
 }
 
-@Preview(showBackground = true)
 @Composable
-fun TrackScreenPreview() {
-    TrackScreen()
-}
-
-
-@Composable
-fun ForumScreen() {
+fun ProfileScreen(navController: NavController) {
     Column(
         modifier = Modifier
             .fillMaxSize()
-//            .background(colorResource(id = R.color.colorPrimaryDark))
             .wrapContentSize(Alignment.Center)
     ) {
-        Text(
-            text = "Forum View",
-            fontWeight = FontWeight.Bold,
-            color = Color.White,
-            modifier = Modifier.align(Alignment.CenterHorizontally),
-            textAlign = TextAlign.Center,
-            fontSize = 25.sp
-        )
-    }
-}
-
-@Preview(showBackground = true)
-@Composable
-fun BooksScreenPreview() {
-    ForumScreen()
-}
-
-@Composable
-fun ProfileScreen(navController: NavHostController) {
-    Column(
-        modifier = Modifier
-            .fillMaxSize()
-//            .background(colorResource(id = R.color.colorPrimaryDark))
-            .wrapContentSize(Alignment.Center)
-    ) {
-        ProfileEcommerce()
+        ProfileEcommerce(navController = navController)
     }
 }
 
 private val optionsList: ArrayList<OptionsData> = ArrayList()
 
 @Composable
-fun ProfileEcommerce(context: Context = LocalContext.current.applicationContext) {
-
+fun ProfileEcommerce(navController: NavController, context: Context = LocalContext.current.applicationContext) {
     // This indicates if the optionsList has data or not
     // Initially, the list is empty. So, its value is false.
     var listPrepared by remember {
@@ -156,166 +407,224 @@ fun ProfileEcommerce(context: Context = LocalContext.current.applicationContext)
             }
 
             // Show the options
-            items(optionsList) { item ->
-                OptionsItemStyle(item = item, context = context)
+            items(optionsList) {
+                    item ->
+                OptionsItemStyle(item = item, context = context, navController = navController)
             }
-
         }
     }
 }
 
-// This composable displays user's image, name, email and edit button
+@OptIn(ExperimentalGlideComposeApi::class)
 @Composable
-private fun UserDetails(context: Context) {
+private fun UserDetails(context: Context, profileViewModel: ProfileViewModel = viewModel()) {
+    val user = profileViewModel.user.value
     Row(
         modifier = Modifier
             .fillMaxWidth()
-            .padding(16.dp),
+            .padding(16.dp)
+            .height(110.dp)
+            .background(Color.White, RoundedCornerShape(10.dp)),
         verticalAlignment = Alignment.CenterVertically
     ) {
-
-        // User's image
-        Image(
-            modifier = Modifier
-                .size(72.dp)
-                .clip(shape = CircleShape),
-            painter = painterResource(id = com.example.industrio.R.drawable.victoria),
-            contentDescription = "Your Image"
-        )
-
-        Row(
-            modifier = Modifier.fillMaxWidth(),
-            horizontalArrangement = Arrangement.SpaceBetween,
-            verticalAlignment = Alignment.CenterVertically
-        ) {
-            Column(
+        if (user != null) {
+            // User's image
+            GlideImage(
+                model = profileViewModel.imageUrl,
+                contentDescription = "Your Image",
+                contentScale = ContentScale.Crop,
                 modifier = Modifier
-                    .weight(weight = 3f, fill = false)
-                    .padding(start = 16.dp)
+                    .padding(start = 20.dp)
+                    .size(72.dp)
+                    .clip(CircleShape),
+            )
+
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.SpaceBetween,
+                verticalAlignment = Alignment.CenterVertically
             ) {
+                Column(
+                    modifier = Modifier
+                        .weight(weight = 3f, fill = false)
+                        .padding(start = 16.dp)
+                ) {
+                    Text(
+                        text = user.name,
+                        style = TextStyle(
+                            fontSize = 22.sp,
+                            fontFamily = FontFamily(
+                                Font(
+                                    R.font.googlesansdisplay_bold,
+                                    FontWeight.Bold
+                                )
+                            ),
+                        ),
+                        maxLines = 1,
+                        overflow = TextOverflow.Ellipsis,
+                    )
 
-                // User's name
-                Text(
-                    text = "Victoria Steele",
-                    style = TextStyle(
-                        fontSize = 22.sp,
-                        fontFamily = FontFamily(Font(com.example.industrio.R.font.roboto_bold, FontWeight.Bold)),
-                    ),
-                    maxLines = 1,
-                    overflow = TextOverflow.Ellipsis
-                )
+                    Spacer(modifier = Modifier.height(2.dp))
 
-                Spacer(modifier = Modifier.height(2.dp))
-
-                // User's email
-                Text(
-                    text = "email123@email.com",
-                    style = TextStyle(
-                        fontSize = 14.sp,
-                        fontFamily = FontFamily(Font(com.example.industrio.R.font.roboto_regular, FontWeight.Normal)),
-                        color = Color.Gray,
-                        letterSpacing = (0.8).sp
-                    ),
-                    maxLines = 1,
-                    overflow = TextOverflow.Ellipsis
-                )
+                    Text(
+                        text = user.email,
+                        style = TextStyle(
+                            fontSize = 14.sp,
+                            fontFamily = FontFamily(
+                                Font(
+                                    R.font.googlesansdisplay_regular,
+                                    FontWeight.Normal
+                                )
+                            ),
+                            color = Color.Gray,
+                            letterSpacing = (0.8).sp
+                        ),
+                        maxLines = 1,
+                        overflow = TextOverflow.Ellipsis
+                    )
+                }
             }
-
-            // Edit button
-            IconButton(
+        } else {
+            Row(
                 modifier = Modifier
-                    .weight(weight = 1f, fill = false),
-                onClick = {
-
-                }) {
-                Icon(
-                    modifier = Modifier.size(24.dp),
-                    imageVector = Icons.Outlined.Edit,
-                    contentDescription = "Edit Details",
-                    tint = MaterialTheme.colors.primary
+                    .fillMaxWidth()
+                    .padding(16.dp)
+                    .height(110.dp)
+                    .background(Color.White, RoundedCornerShape(10.dp))
+                    .shimmer(),
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                Box(
+                    modifier = Modifier
+                        .size(72.dp)
+                        .clip(RoundedCornerShape(40.dp))
+                        .background(Color(0xffbbbbbb))
+                        .padding(start = 20.dp)
+                        .shimmer()
                 )
-            }
 
+                Row(
+                    modifier = Modifier.fillMaxWidth(),
+                    horizontalArrangement = Arrangement.SpaceBetween,
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+                    Column(
+                        modifier = Modifier
+                            .weight(weight = 3f, fill = false)
+                            .padding(start = 16.dp)
+                    ) {
+                        Text(
+                            text = "",
+                            modifier = Modifier
+                                .width(200.dp)
+                                .height(20.dp)
+                                .background(Color(0xffbbbbbb))
+                                .shimmer()
+                        )
+
+                        Spacer(modifier = Modifier.height(10.dp))
+
+                        Text(
+                            text = "",
+                            modifier = Modifier
+                                .width(160.dp)
+                                .height(20.dp)
+                                .background(Color(0xffbbbbbb))
+                                .shimmer()
+                        )
+                    }
+                }
+
+            }
         }
     }
 }
 
 // Row style for options
 @Composable
-private fun OptionsItemStyle(item: OptionsData, context: Context) {
-    Row(
+private fun OptionsItemStyle(item: OptionsData, context: Context, navController: NavController, profileViewModel: ProfileViewModel = viewModel()) {
+    val user = profileViewModel.user.value
+
+    Box(
         modifier = Modifier
-            .fillMaxWidth()
-            .clickable(enabled = true) {
-                if(item.title == "Sign Out")
-                {
-                    FirebaseAuth.getInstance().signOut();
-
-
-
-                }
-
-            }
-            .padding(all = 16.dp),
-        verticalAlignment = Alignment.CenterVertically
+            .padding(start = 16.dp, end = 16.dp)
     ) {
-
-        // Icon
-        Icon(
-            modifier = Modifier
-                .size(32.dp),
-            imageVector = item.icon,
-            contentDescription = item.title,
-            tint = MaterialTheme.colors.primary
-        )
-
         Row(
             modifier = Modifier
-                .fillMaxWidth(),
-            horizontalArrangement = Arrangement.SpaceBetween,
+                .background(Color.White, RoundedCornerShape(10.dp))
+                .clickable(enabled = true) {
+                    when (item.title) {
+                        "Account" -> navController.navigate(Graph.PROFILE)
+                        "My Health" -> navController.navigate(Profile.DashboardScreen.route)
+                        "Orders" -> navController.navigate(Profile.OrdersScreen.route)
+                        "Addresses" -> navController.navigate(Profile.AddressesScreen.route)
+                        "Saved Cards" -> navController.navigate(Profile.CardsScreen.route)
+                        "Settings" -> navController.navigate(Profile.SettingsScreen.route)
+                        "Help Center" -> navController.navigate(Profile.HelpScreen.route)
+                        "Offers and Coupons" -> navController.navigate(Profile.OffersScreen.route)
+                    }
+                }
+                .padding(all = 16.dp),
             verticalAlignment = Alignment.CenterVertically
         ) {
-            Column(
-                modifier = Modifier
-                    .weight(weight = 3f, fill = false)
-                    .padding(start = 16.dp)
-            ) {
-
-                // Title
-                Text(
-                    text = item.title,
-                    style = TextStyle(
-                        fontSize = 18.sp,
-                        fontFamily = FontFamily(Font(com.example.industrio.R.font.roboto_medium, FontWeight.Medium))
-                    )
-                )
-
-                Spacer(modifier = Modifier.height(2.dp))
-
-                // Sub title
-                Text(
-                    text = item.subTitle,
-                    style = TextStyle(
-                        fontSize = 14.sp,
-                        letterSpacing = (0.8).sp,
-                        fontFamily = FontFamily(Font(com.example.industrio.R.font.roboto_regular, FontWeight.Normal)),
-                        color = Color.Gray
-                    )
-                )
-
-            }
-
-            // Right arrow icon
+            // Icon
             Icon(
                 modifier = Modifier
-                    .weight(weight = 1f, fill = false),
-                imageVector = Icons.Outlined.CheckCircle,
+                    .size(32.dp),
+                imageVector = item.icon,
                 contentDescription = item.title,
-                tint = Color.Black.copy(alpha = 0.70f)
+                tint = MaterialTheme.colors.primary
             )
-        }
 
+            Row(
+                modifier = Modifier
+                    .fillMaxWidth(),
+                horizontalArrangement = Arrangement.SpaceBetween,
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                Column(
+                    modifier = Modifier
+                        .weight(weight = 3f, fill = false)
+                        .padding(start = 16.dp)
+                ) {
+
+                    // Title
+                    Text(
+                        text = item.title,
+                        style = TextStyle(
+                            fontSize = 18.sp,
+                            fontFamily = FontFamily(
+                                Font(
+                                    R.font.googlesansdisplay_medium,
+                                    FontWeight.Medium
+                                )
+                            )
+                        )
+                    )
+
+                    Spacer(modifier = Modifier.height(2.dp))
+
+                    // Sub title
+                    Text(
+                        text = item.subTitle,
+                        style = TextStyle(
+                            fontSize = 14.sp,
+                            letterSpacing = (0.8).sp,
+                            fontFamily = FontFamily(
+                                Font(
+                                    R.font.googlesansdisplay_regular,
+                                    FontWeight.Normal
+                                )
+                            ),
+                            color = Color.Gray
+                        )
+                    )
+                }
+            }
+        }
     }
+
+    Spacer(modifier = Modifier.height(10.dp))
 }
 
 private fun prepareOptionsData() {
@@ -327,6 +636,14 @@ private fun prepareOptionsData() {
             icon = appIcons.Person,
             title = "Account",
             subTitle = "Manage your account"
+        )
+    )
+
+    optionsList.add(
+        OptionsData(
+            icon = appIcons.ThumbUp,
+            title = "My Dashboard",
+            subTitle = "Manage your prescriptions and schedules"
         )
     )
 
@@ -348,7 +665,7 @@ private fun prepareOptionsData() {
 
     optionsList.add(
         OptionsData(
-            icon = appIcons.AccountBox,
+            icon = appIcons.Star,
             title = "Saved Cards",
             subTitle = "Your saved debit/credit cards"
         )
@@ -377,19 +694,11 @@ private fun prepareOptionsData() {
             subTitle = "Offers and coupon codes for you"
         )
     )
-
     optionsList.add(
         OptionsData(
-            icon = appIcons.FavoriteBorder,
-            title = "Wishlist",
-            subTitle = "Items you saved"
-        )
-    )
-    optionsList.add(
-        OptionsData(
-            icon = appIcons.ExitToApp,
-            title = "Sign Out",
-            subTitle = "Switch the account"
+            icon = appIcons.Abc,
+            title = "",
+            subTitle = ""
         )
     )
 }

@@ -1,4 +1,4 @@
-package com.example.preecure.screens.SignupScreen
+package com.example.industrio.screens.SignupScreen
 
 import android.util.Log
 import android.widget.Toast
@@ -23,15 +23,18 @@ import androidx.compose.ui.res.stringResource
 import androidx.navigation.NavController
 import com.example.industrio.R
 import com.example.industrio.Utils.LoadingState
-import com.example.industrio.navigation.Screens
+import com.example.industrio.navigation.AuthScreen
+import com.example.industrio.navigation.nav_graph.Graph
 import com.google.android.gms.auth.api.signin.GoogleSignIn
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions
 import com.google.android.gms.common.api.ApiException
 import com.google.firebase.auth.GoogleAuthProvider
 
 @Composable
-fun SignUpScreen(navController: NavController, signUpViewModel: SignUpViewModel = viewModel()) {
+fun SignUpScreen(navController: NavController,
+                 signUpViewModel: SignUpViewModel = viewModel()) {
     val allInputsFilled = signUpViewModel.email.isNotBlank() && signUpViewModel.password.isNotBlank()
+            && signUpViewModel.name.isNotBlank() && signUpViewModel.phone.isNotBlank()
 
     val status by signUpViewModel.loadingState.collectAsState()
     val context = LocalContext.current
@@ -70,6 +73,16 @@ fun SignUpScreen(navController: NavController, signUpViewModel: SignUpViewModel 
             modifier = Modifier.fillMaxWidth()
         )
         OutlinedTextField(
+            value = signUpViewModel.phone,
+            onValueChange = { signUpViewModel.phone = it },
+            label = { Text("Phone Number") },
+            keyboardOptions = KeyboardOptions(
+                keyboardType = KeyboardType.Number,
+                imeAction = ImeAction.Next,
+            ),
+            modifier = Modifier.fillMaxWidth()
+        )
+        OutlinedTextField(
             value = signUpViewModel.email,
             onValueChange = { signUpViewModel.email = it },
             label = { Text("Email address") },
@@ -87,21 +100,6 @@ fun SignUpScreen(navController: NavController, signUpViewModel: SignUpViewModel 
                 keyboardType = KeyboardType.Password,
                 imeAction = ImeAction.Done
             ),
-
-            visualTransformation = PasswordVisualTransformation(),
-            modifier = Modifier
-                .fillMaxWidth()
-        )
-
-        OutlinedTextField(
-            value = signUpViewModel.cpassword,
-            onValueChange = { signUpViewModel.cpassword = it },
-            label = { Text("Password") },
-            keyboardOptions = KeyboardOptions(
-                keyboardType = KeyboardType.Password,
-                imeAction = ImeAction.Done
-            ),
-
             visualTransformation = PasswordVisualTransformation(),
             modifier = Modifier
                 .fillMaxWidth()
@@ -122,7 +120,7 @@ fun SignUpScreen(navController: NavController, signUpViewModel: SignUpViewModel 
             }
         } else {
             Button(
-                onClick = { signUpViewModel.signUp() },
+                onClick = { signUpViewModel.signUp(NewUser(signUpViewModel.name, signUpViewModel.phone, signUpViewModel.email, signUpViewModel.password)) },
                 modifier = Modifier
                     .fillMaxWidth(),
                 enabled = allInputsFilled
@@ -132,10 +130,19 @@ fun SignUpScreen(navController: NavController, signUpViewModel: SignUpViewModel 
         }
         if (signUpViewModel.isError) {
             Text(
+                modifier = Modifier
+                    .padding(top = 10.dp),
+                color = Color.Red,
                 text = signUpViewModel.errorMessage
             )
         }
 
+        if (signUpViewModel.isSignedUp) {
+            LaunchedEffect(Unit) {
+                navController.popBackStack()
+                navController.navigate(Graph.HOME)
+            }
+        }
 
         Spacer(modifier = Modifier
             .height(30.dp))
@@ -208,7 +215,7 @@ fun SignUpScreen(navController: NavController, signUpViewModel: SignUpViewModel 
                 text = "Already have an account? ",
             )
 
-            TextButton(onClick = {navController.navigate(Screens.Signin.route)}) {
+            TextButton(onClick = {navController.navigate(AuthScreen.SignInScreen.route)}) {
                 Text(text = "Sign In")
             }
         }

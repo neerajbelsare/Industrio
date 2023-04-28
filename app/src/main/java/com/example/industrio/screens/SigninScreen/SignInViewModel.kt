@@ -27,21 +27,27 @@ class SignInViewModel : ViewModel() {
     private lateinit var user: FirebaseAuth
 
     fun signIn() {
+        isLoading = true
+        user = FirebaseAuth.getInstance()
         if (email.isNotEmpty() && password.isNotEmpty()) {
             user.signInWithEmailAndPassword(email, password).addOnCompleteListener {
                     task ->
                 if(task.isSuccessful) {
+
                     isLoading = false
                     isLoggedIn = true
                 }
                 else {
                     isError = true
+                    isLoggedIn = false
+                    isLoading = false
                     errorMessage = "The email or password is incorrect."
                 }
             }
 
         } else {
             isError = true
+            isLoggedIn = false
             errorMessage = "Please fill out all the fields."
             isEmpty = true
         }

@@ -5,25 +5,20 @@ import androidx.compose.material.MaterialTheme
 import androidx.compose.material.darkColors
 import androidx.compose.material.lightColors
 import androidx.compose.runtime.Composable
-
-private val DarkColorPalette = darkColors(
-    primary = MainColor,
-    primaryVariant = MainColor,
-    secondary = MainColor
-)
+import androidx.compose.ui.graphics.Color
 
 private val LightColorPalette = lightColors(
     primary = MainColor,
     primaryVariant = MainColor,
-    secondary = MainColor
+    secondary = MainColor,
 
-
+    background = Color(0xFFF1F1F1),
 )
 
 @Composable
 fun IndustrioTheme(darkTheme: Boolean = isSystemInDarkTheme(), content: @Composable () -> Unit) {
     val colors = if (darkTheme) {
-        DarkColorPalette
+        LightColorPalette
     } else {
         LightColorPalette
     }

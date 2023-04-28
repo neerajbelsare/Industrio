@@ -6,13 +6,16 @@ import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.*
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
@@ -25,7 +28,8 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import com.example.industrio.R
 import com.example.industrio.Utils.LoadingState
-import com.example.industrio.navigation.Screens
+import com.example.industrio.navigation.AuthScreen
+import com.example.industrio.navigation.nav_graph.Graph
 import com.google.android.gms.auth.api.signin.GoogleSignIn
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions
 import com.google.android.gms.common.api.ApiException
@@ -50,12 +54,15 @@ fun SignInScreen(navController: NavController, signInViewModel: SignInViewModel 
         }
     }
 
-        Image(
-            painter = painterResource(id = R.drawable.artboard_1),
-            contentDescription = "My Image",
-            modifier = Modifier
-                .fillMaxWidth()
-        )
+    Image(
+    painter = painterResource(id = R.drawable.artboard_1),
+    contentDescription = "My Image",
+    modifier = Modifier
+        .clip(RoundedCornerShape(0.dp, 0.dp, 15.dp, 15.dp))
+    )
+
+    Spacer(modifier = Modifier
+        .height(30.dp))
 
     Column(
         modifier = Modifier
@@ -122,11 +129,14 @@ fun SignInScreen(navController: NavController, signInViewModel: SignInViewModel 
         }
 
         if(signInViewModel.isLoggedIn) {
-            navController.navigate(Screens.Home.route)
+            LaunchedEffect(Unit) {
+                navController.popBackStack()
+                navController.navigate(Graph.HOME)
+            }
         }
 
         Spacer(modifier = Modifier
-            .height(30.dp))
+            .height(10.dp))
 
         Row(
             modifier = Modifier.fillMaxWidth(),
@@ -176,7 +186,6 @@ fun SignInScreen(navController: NavController, signInViewModel: SignInViewModel 
                     backgroundColor = Color.Transparent
                 ),
                 onClick = {
-
                 }
             ) {
                 Image(
@@ -198,7 +207,7 @@ fun SignInScreen(navController: NavController, signInViewModel: SignInViewModel 
                 text = "New to Preecure?",
             )
 
-            TextButton(onClick = {navController.navigate(Screens.Signup.route)}) {
+            TextButton(onClick = {navController.navigate(AuthScreen.SignUpScreen.route)}) {
                 Text(text = "Sign Up")
             }
         }

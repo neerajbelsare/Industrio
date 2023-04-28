@@ -1,63 +1,34 @@
 package com.example.industrio
 
+import android.content.pm.ActivityInfo
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
-import androidx.annotation.FloatRange
-import androidx.annotation.IntRange
-import androidx.compose.animation.core.animateDpAsState
-import androidx.compose.foundation.background
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
-import androidx.compose.foundation.shape.CircleShape
-import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.foundation.text.ClickableText
 import androidx.compose.material.*
-import androidx.compose.material.MaterialTheme.colors
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.saveable.rememberSaveable
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.clip
-import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.StrokeCap.Companion.Butt
-import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.text.style.TextAlign
-import androidx.compose.ui.tooling.preview.Preview
-import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
-import androidx.navigation.NavController
-import androidx.navigation.NavHostController
 import androidx.navigation.compose.rememberNavController
-import com.example.industrio.navigation.NavGraph
-import com.example.industrio.navigation.Screens
 import com.example.industrio.ui.theme.IndustrioTheme
-import com.google.accompanist.pager.ExperimentalPagerApi
-import com.google.accompanist.pager.HorizontalPager
-import com.google.accompanist.pager.PagerState
+import com.example.industrio.navigation.nav_graph.SetupNavGraph
+import com.google.firebase.FirebaseApp
 
 class MainActivity : ComponentActivity() {
-
-    @OptIn(ExperimentalPagerApi::class)
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        requestedOrientation = ActivityInfo.SCREEN_ORIENTATION_PORTRAIT
+        FirebaseApp.initializeApp(this)
         setContent {
             IndustrioTheme {
                 Surface(
                     modifier = Modifier.fillMaxSize(),
                     color = MaterialTheme.colors.background
                 ) {
-
-                    val navController = rememberNavController()
-//                    OnBoardScreen(navController)
-
-                    NavGraph(navController = navController)
+                    SetupNavGraph(navController = rememberNavController())
                 }
             }
-
         }
     }
+}
 
 
 
@@ -281,4 +252,3 @@ class MainActivity : ComponentActivity() {
 //            fontWeight = FontWeight.Medium
 //        )
 //    }
-}

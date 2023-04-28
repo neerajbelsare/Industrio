@@ -83,21 +83,39 @@ dependencies {
 
     implementation "androidx.compose.animation:animation:1.3.3"
     implementation "androidx.navigation:navigation-compose:2.4.0-alpha06"
-    implementation "com.google.accompanist:accompanist-navigation-animation:0.16.0"
-
-    implementation 'com.google.accompanist:accompanist-pager:0.12.0'
-    implementation 'com.airbnb.android:lottie-compose:5.2.0'
+    implementation "com.google.accompanist:accompanist-navigation-animation:0.29.2-rc"
 
     implementation 'com.google.maps.android:maps-compose:2.11.0'
     implementation 'com.google.android.gms:play-services-maps:18.1.0'
+    implementation 'com.google.firebase:firebase-database:20.0.4'
+    //For image uploading
+    implementation("io.coil-kt:coil-compose:2.0.0-rc01")
+
+    implementation 'com.google.firebase:firebase-firestore-ktx'
+    implementation 'com.google.firebase:firebase-storage-ktx:20.0.0'
+    implementation 'com.google.firebase:firebase-firestore:24.1.1'
+    implementation 'com.google.firebase:firebase-storage:20.0.1'
+
+    implementation "androidx.constraintlayout:constraintlayout-compose:1.0.0-beta02"
+
+    implementation 'com.valentinilk.shimmer:compose-shimmer:1.0.4'
+
+    implementation "com.google.accompanist:accompanist-swiperefresh:0.25.1"
+
+    //Pager Library
+    implementation 'com.google.accompanist:accompanist-pager:0.22.0-rc'
+
+    //Glide Image
+    implementation "com.github.bumptech.glide:compose:1.0.0-alpha.1"
+
+    // Stream SDK
+    implementation "io.getstream:stream-chat-android-compose:5.4.0"
+    implementation "androidx.compose.material:material-icons-extended:$compose_ui_version"
+
+    // Dagger - HILT
+    implementation "com.google.dagger:hilt-android:2.38.1"
     implementation 'com.google.android.gms:play-services-location:21.0.1'
-
-    implementation 'com.google.maps.android:maps-ktx:3.2.1'
-    implementation 'com.google.maps.android:maps-utils-ktx:3.2.1'
-
-    // Hilt
-    implementation "com.google.dagger:hilt-android:2.42"
-    kapt "com.google.dagger:hilt-compiler:2.42"
+    kapt "com.google.dagger:hilt-compiler:2.38.1"
 
     testImplementation 'junit:junit:4.13.2'
     androidTestImplementation 'androidx.test.ext:junit:1.1.5'
@@ -105,6 +123,8 @@ dependencies {
     androidTestImplementation "androidx.compose.ui:ui-test-junit4:$compose_ui_version"
     debugImplementation "androidx.compose.ui:ui-tooling:$compose_ui_version"
     debugImplementation "androidx.compose.ui:ui-test-manifest:$compose_ui_version"
+
+    implementation 'com.airbnb.android:lottie-compose:5.2.0'
 
 // OTP
     implementation platform('com.google.firebase:firebase-bom:31.2.3')

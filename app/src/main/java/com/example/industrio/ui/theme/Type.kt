@@ -25,9 +25,24 @@ private val Roboto = FontFamily(
     Font(R.font.roboto_thinitalic, weight = FontWeight.Light, style = FontStyle.Italic),
 )
 
+private val GoogleSans = FontFamily(
+    Font(R.font.googlesans_bold, weight = FontWeight.Bold),
+    Font(R.font.googlesans_bolditalic, weight = FontWeight.Bold, style = FontStyle.Italic),
+    Font(R.font.googlesans_italic, style = FontStyle.Italic),
+    Font(R.font.googlesans_medium, weight = FontWeight.Medium),
+    Font(R.font.googlesans_mediumitalic, weight = FontWeight.Medium, style = FontStyle.Italic),
+    Font(R.font.googlesans_regular, weight = FontWeight.Normal),
+    Font(R.font.googlesansdisplay_bold, weight = FontWeight.Bold),
+    Font(R.font.googlesansdisplay_bolditalic, weight = FontWeight.Bold, style = FontStyle.Italic),
+    Font(R.font.googlesansdisplay_italic, style = FontStyle.Italic),
+    Font(R.font.googlesansdisplay_medium, weight = FontWeight.Medium),
+    Font(R.font.googlesansdisplay_mediumitalic, weight = FontWeight.Medium, style = FontStyle.Italic),
+    Font(R.font.googlesansdisplay_regular, weight = FontWeight.Normal),
+)
+
 // Set of Material typography styles to start with
 val Typography = Typography(
-    defaultFontFamily = Roboto
+    defaultFontFamily = GoogleSans
 //    body1 = TextStyle(
 //        fontFamily = FontFamily.Default,
 //        fontWeight = FontWeight.Normal,
