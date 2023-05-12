@@ -452,7 +452,7 @@ fun TechnicianForm(navController: NavController,
             } else {
                 Button(
                     onClick = {
-                        technicianFormViewModel.insertDoctorUser(
+                        technicianFormViewModel.insertTechnicianUser(
                             TechnicianInfo(technicianFormViewModel.name,
                             technicianFormViewModel.speciality, technicianFormViewModel.email, technicianFormViewModel.phone,
                         technicianFormViewModel.startTime, technicianFormViewModel.endTime, technicianFormViewModel.experience,

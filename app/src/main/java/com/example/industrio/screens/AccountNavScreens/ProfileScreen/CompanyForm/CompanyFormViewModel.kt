@@ -39,7 +39,7 @@ class CompanyFormViewModel: ViewModel() {
     init {
         isLoading = true
         getData()
-        getLabData()
+        getCompanyData()
     }
 
     fun getData() {
@@ -53,11 +53,11 @@ class CompanyFormViewModel: ViewModel() {
         }
     }
 
-    fun getLabData() {
+    fun getCompanyData() {
         val user = mutableStateOf(CompanyDocuments())
 
         viewModelScope.launch {
-            user.value = getLabDetails()
+            user.value = getCompanyDetails()
             val labDetails = user.value
 
             imageUrl = labDetails.imageUrl
@@ -82,7 +82,7 @@ class CompanyFormViewModel: ViewModel() {
         return about
     }
 
-    suspend fun getLabDetails(): CompanyDocuments {
+    suspend fun getCompanyDetails(): CompanyDocuments {
 
         val fdb = FirebaseFirestore.getInstance()
         var about = CompanyDocuments()

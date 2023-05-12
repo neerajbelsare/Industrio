@@ -23,6 +23,8 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.text.KeyboardActions
+import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
@@ -45,6 +47,7 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.Font
 import androidx.compose.ui.text.font.FontFamily
+import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
@@ -189,7 +192,7 @@ fun HomeScreen(navController: NavController) {
             Spacer(Modifier.weight(0.3f))
             GridItem(icon = Icons.Filled.Home, text = "Chat with Doctor")
             Spacer(Modifier.weight(1f))
-            GridItem(icon = Icons.Filled.Settings, text = "Find Labs and Pharmacies")
+            GridItem(icon = Icons.Filled.Settings, text = "Find Technicians")
             Spacer(Modifier.weight(1f))
             GridItem(icon = Icons.Filled.Person, text = "View Articles")
             Spacer(Modifier.weight(0.3f))
@@ -349,16 +352,7 @@ fun ExploreScreen(navController: NavController) {
             .fillMaxSize()
             .wrapContentSize(Alignment.Center)
     ) {
-        Button(
-            onClick = {},
-            modifier = Modifier
-                .height(40.dp),
-            shape = RoundedCornerShape(40.dp)
-        ) {
-            Text(
-                text = "Go to Map"
-            )
-        }
+
     }
 }
 
@@ -534,7 +528,6 @@ private fun UserDetails(context: Context, profileViewModel: ProfileViewModel = v
                         )
                     }
                 }
-
             }
         }
     }

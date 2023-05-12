@@ -1,12 +1,9 @@
 package com.example.industrio.navigation.nav_graph
 
-import androidx.compose.runtime.Composable
 import androidx.navigation.NavGraphBuilder
 import androidx.navigation.NavHostController
-import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.navigation
-import com.example.industrio.BottomBarScreen
 import com.example.industrio.screens.AccountNavScreens.AddressesScreen
 import com.example.industrio.screens.AccountNavScreens.CardsScreen
 import com.example.industrio.screens.AccountNavScreens.DashboardScreen
@@ -20,10 +17,6 @@ import com.example.industrio.screens.AccountNavScreens.ProfileScreen.CompanyForm
 import com.example.industrio.screens.AccountNavScreens.ProfileScreen.TechnicianForm.TechnicianForm
 import com.example.industrio.screens.AccountNavScreens.ProfileScreen.TechnicianForm.TechnicianForm2
 import com.example.industrio.screens.AccountNavScreens.SettingsScreen
-import com.example.industrio.screens.HomeScreen.ChatScreen
-import com.example.industrio.screens.HomeScreen.ExploreScreen
-import com.example.industrio.screens.HomeScreen.HomeScreen
-import com.example.industrio.screens.HomeScreen.ProfileScreen
 import com.example.industrio.navigation.CompanyScreen
 import com.example.industrio.navigation.FormScreen
 import com.example.industrio.navigation.Profile

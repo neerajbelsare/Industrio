@@ -204,7 +204,7 @@ fun SignInScreen(navController: NavController, signInViewModel: SignInViewModel 
             verticalAlignment = Alignment.CenterVertically
         ) {
             Text(
-                text = "New to Preecure?",
+                text = "New to Industrio?",
             )
 
             TextButton(onClick = {navController.navigate(AuthScreen.SignUpScreen.route)}) {

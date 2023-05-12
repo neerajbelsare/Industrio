@@ -101,27 +101,28 @@ class TechnicianFormViewModel: ViewModel() {
         return about
     }
 
-    fun insertDoctorUser(newDoctorInfo: TechnicianInfo) {
+    fun insertTechnicianUser(newTechnicianInfo: TechnicianInfo) {
         isLoading = true
 
         val currentUser = FirebaseAuth.getInstance().currentUser
         val firebase = FirebaseFirestore.getInstance()
-        val db = firebase.collection("doctors").document(currentUser!!.uid)
+        val db = firebase.collection("technicians").document(currentUser!!.uid)
 
-        val newDoctor = hashMapOf(
-            "name" to newDoctorInfo.name,
-            "speciality" to newDoctorInfo.speciality,
-            "email" to newDoctorInfo.email,
-            "phone" to newDoctorInfo.phone,
-            "startTime" to newDoctorInfo.startTime,
-            "endTime" to newDoctorInfo.endTime,
+        val newTechnician = hashMapOf(
+            "name" to newTechnicianInfo.name,
+            "speciality" to newTechnicianInfo.speciality,
+            "email" to newTechnicianInfo.email,
+            "phone" to newTechnicianInfo.phone,
+            "startTime" to newTechnicianInfo.startTime,
+            "endTime" to newTechnicianInfo.endTime,
+            "rating" to 0.0,
             "qualificationUrl" to "https://drive.google.com/file/d/1jaMTdkE-IxTEHRVsHaDwUNTEHm-U8xVw/view?usp=sharing",
             "identityUrl" to "https://drive.google.com/file/d/1jaMTdkE-IxTEHRVsHaDwUNTEHm-U8xVw/view?usp=sharing",
             "profileUrl" to "https://drive.google.com/file/d/1jaMTdkE-IxTEHRVsHaDwUNTEHm-U8xVw/view?usp=sharing"
         )
 
         db
-        .set(newDoctor)
+        .set(newTechnician)
         .addOnSuccessListener {
             isLoading = false
         }
