@@ -9,6 +9,6 @@
 <!--    </style>-->
 
     <style name="Theme.Industrio" parent="android:Theme.Material.Light.NoActionBar">
-        <item name="android:statusBarColor">#EE2E3D</item>
+        <item name="android:statusBarColor">#474747</item>
     </style>
 </resources>

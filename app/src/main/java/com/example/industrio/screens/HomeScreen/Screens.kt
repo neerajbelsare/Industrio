@@ -58,12 +58,14 @@ import coil.request.ImageRequest
 import com.bumptech.glide.integration.compose.ExperimentalGlideComposeApi
 import com.bumptech.glide.integration.compose.GlideImage
 import com.example.industrio.R
+import com.example.industrio.navigation.AuthScreen
 import com.example.industrio.ui.theme.MainColor
 import com.example.industrio.navigation.Profile
 import com.example.industrio.navigation.nav_graph.Graph
 import com.google.accompanist.pager.ExperimentalPagerApi
 import com.google.accompanist.pager.HorizontalPager
 import com.google.accompanist.pager.PagerState
+import com.google.firebase.auth.FirebaseAuth
 import com.valentinilk.shimmer.shimmer
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
@@ -555,6 +557,11 @@ private fun OptionsItemStyle(item: OptionsData, context: Context, navController:
                         "Settings" -> navController.navigate(Profile.SettingsScreen.route)
                         "Help Center" -> navController.navigate(Profile.HelpScreen.route)
                         "Offers and Coupons" -> navController.navigate(Profile.OffersScreen.route)
+                        "Sign Out" -> {
+                            val auth = FirebaseAuth.getInstance()
+                            auth.signOut()
+                            navController.navigate(AuthScreen.SignInScreen.route)
+                        }
                     }
                 }
                 .padding(all = 16.dp),
@@ -636,7 +643,7 @@ private fun prepareOptionsData() {
         OptionsData(
             icon = appIcons.ThumbUp,
             title = "My Dashboard",
-            subTitle = "Manage your prescriptions and schedules"
+            subTitle = "Manage additional account settings"
         )
     )
 
@@ -687,6 +694,15 @@ private fun prepareOptionsData() {
             subTitle = "Offers and coupon codes for you"
         )
     )
+
+    optionsList.add(
+        OptionsData(
+            icon = appIcons.Abc,
+            title = "Sign Out",
+            subTitle = "Sign out from the app"
+        )
+    )
+
     optionsList.add(
         OptionsData(
             icon = appIcons.Abc,

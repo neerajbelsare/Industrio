@@ -31,9 +31,4 @@
         android:pathData="M57.4,56.6l-31,-24l-4,-3l35,-10V56.6z"
         android:fillColor="#4285F4"/>
   </group>
-  <path
-      android:pathData="M32.9,32.6m-29.3,0a29.3,29.3 0,1 1,58.6 0a29.3,29.3 0,1 1,-58.6 0"
-      android:strokeWidth="0.5"
-      android:fillColor="#00000000"
-      android:strokeColor="#B8BFC6"/>
 </vector>

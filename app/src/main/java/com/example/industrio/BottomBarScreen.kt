@@ -22,7 +22,7 @@ sealed class BottomBarScreen (
 
     object Explore : BottomBarScreen(
         route = "Explore",
-        icon =R.drawable.ic_track
+        icon =R.drawable.ic_explore
     )
 
     object Chat : BottomBarScreen(
