@@ -3,7 +3,15 @@ package com.example.industrio.navigation.nav_graph
 import androidx.navigation.NavGraphBuilder
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.composable
+<<<<<<< Updated upstream
 import androidx.navigation.compose.navigation
+=======
+import androidx.navigation.navigation
+import com.example.industrio.navigation.CompanyScreen
+import com.example.industrio.navigation.FormScreen
+import com.example.industrio.navigation.Profile
+import com.example.industrio.navigation.TechnicianScreen
+>>>>>>> Stashed changes
 import com.example.industrio.screens.AccountNavScreens.AddressesScreen
 import com.example.industrio.screens.AccountNavScreens.CardsScreen
 import com.example.industrio.screens.AccountNavScreens.DashboardScreen
@@ -14,14 +22,18 @@ import com.example.industrio.screens.AccountNavScreens.ProfileScreen.AccountScre
 import com.example.industrio.screens.AccountNavScreens.ProfileScreen.CompanyForm.CompanyConfirmScreen
 import com.example.industrio.screens.AccountNavScreens.ProfileScreen.CompanyForm.CompanyForm
 import com.example.industrio.screens.AccountNavScreens.ProfileScreen.CompanyForm.CompanyForm2
+import com.example.industrio.screens.AccountNavScreens.ProfileScreen.TechnicianForm.TechnicianConfirmScreen
 import com.example.industrio.screens.AccountNavScreens.ProfileScreen.TechnicianForm.TechnicianForm
 import com.example.industrio.screens.AccountNavScreens.ProfileScreen.TechnicianForm.TechnicianForm2
 import com.example.industrio.screens.AccountNavScreens.SettingsScreen
+<<<<<<< Updated upstream
 import com.example.industrio.navigation.CompanyScreen
 import com.example.industrio.navigation.FormScreen
 import com.example.industrio.navigation.Profile
 import com.example.industrio.navigation.TechnicianScreen
 import com.example.industrio.screens.AccountNavScreens.ProfileScreen.TechnicianForm.TechnicianConfirmScreen
+=======
+>>>>>>> Stashed changes
 
 fun NavGraphBuilder.profileNavGraph(navController: NavHostController) {
     navigation(
