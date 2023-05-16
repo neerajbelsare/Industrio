@@ -23,8 +23,6 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.foundation.text.KeyboardActions
-import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
@@ -47,7 +45,6 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.Font
 import androidx.compose.ui.text.font.FontFamily
-import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
@@ -264,66 +261,6 @@ fun HomeScreen(navController: NavController) {
             Image(painter = painterResource(id = R.drawable.card_special), contentDescription = null)
         }
 
-        Card(
-            modifier = Modifier
-                .padding(start = 15.dp, end = 15.dp, top = 10.dp)
-                .clip(RoundedCornerShape(16.dp))
-                .fillMaxWidth(),
-            elevation = 10.dp,
-        ) {
-            Image(painter = painterResource(id = R.drawable.card1), contentDescription = null)
-        }
-
-        Card(
-            modifier = Modifier
-                .padding(start = 15.dp, end = 15.dp, top = 20.dp)
-                .clip(RoundedCornerShape(16.dp))
-                .fillMaxWidth(),
-            elevation = 10.dp,
-        ) {
-            Image(painter = painterResource(id = R.drawable.card2), contentDescription = null)
-        }
-
-        Card(
-            modifier = Modifier
-                .padding(start = 15.dp, end = 15.dp, top = 20.dp)
-                .clip(RoundedCornerShape(16.dp))
-                .fillMaxWidth(),
-            elevation = 10.dp,
-        ) {
-            Image(painter = painterResource(id = R.drawable.card3), contentDescription = null)
-        }
-
-        Card(
-            modifier = Modifier
-                .padding(start = 15.dp, end = 15.dp, top = 20.dp)
-                .clip(RoundedCornerShape(16.dp))
-                .fillMaxWidth(),
-            elevation = 10.dp,
-        ) {
-            Image(painter = painterResource(id = R.drawable.card4), contentDescription = null)
-        }
-
-        Card(
-            modifier = Modifier
-                .padding(start = 15.dp, end = 15.dp, top = 20.dp)
-                .clip(RoundedCornerShape(16.dp))
-                .fillMaxWidth(),
-            elevation = 10.dp,
-        ) {
-            Image(painter = painterResource(id = R.drawable.card5), contentDescription = null)
-        }
-
-        Card(
-            modifier = Modifier
-                .padding(start = 15.dp, end = 15.dp, top = 20.dp)
-                .clip(RoundedCornerShape(16.dp))
-                .fillMaxWidth(),
-            elevation = 10.dp,
-        ) {
-            Image(painter = painterResource(id = R.drawable.card6), contentDescription = null)
-        }
-
         Spacer(modifier = Modifier
             .height(80.dp))
     }
@@ -364,6 +301,7 @@ fun ProfileScreen(navController: NavController) {
         modifier = Modifier
             .fillMaxSize()
             .wrapContentSize(Alignment.Center)
+            .padding(bottom = 60.dp)
     ) {
         ProfileEcommerce(navController = navController)
     }
@@ -414,7 +352,7 @@ fun ProfileEcommerce(navController: NavController, context: Context = LocalConte
 @OptIn(ExperimentalGlideComposeApi::class)
 @Composable
 private fun UserDetails(context: Context, profileViewModel: ProfileViewModel = viewModel()) {
-    val user = profileViewModel.user.value
+    val userDetails = profileViewModel.userDetails.collectAsState()
     Row(
         modifier = Modifier
             .fillMaxWidth()
@@ -423,7 +361,7 @@ private fun UserDetails(context: Context, profileViewModel: ProfileViewModel = v
             .background(Color.White, RoundedCornerShape(10.dp)),
         verticalAlignment = Alignment.CenterVertically
     ) {
-        if (user != null) {
+        if (userDetails != null) {
             // User's image
             GlideImage(
                 model = profileViewModel.imageUrl,
@@ -445,39 +383,41 @@ private fun UserDetails(context: Context, profileViewModel: ProfileViewModel = v
                         .weight(weight = 3f, fill = false)
                         .padding(start = 16.dp)
                 ) {
-                    Text(
-                        text = user.name,
-                        style = TextStyle(
-                            fontSize = 22.sp,
-                            fontFamily = FontFamily(
-                                Font(
-                                    R.font.googlesansdisplay_bold,
-                                    FontWeight.Bold
-                                )
+                    userDetails.value?.let { user ->
+                        Text(
+                            text = user.name,
+                            style = TextStyle(
+                                fontSize = 22.sp,
+                                fontFamily = FontFamily(
+                                    Font(
+                                        R.font.googlesansdisplay_bold,
+                                        FontWeight.Bold
+                                    )
+                                ),
                             ),
-                        ),
-                        maxLines = 1,
-                        overflow = TextOverflow.Ellipsis,
-                    )
+                            maxLines = 1,
+                            overflow = TextOverflow.Ellipsis,
+                        )
 
-                    Spacer(modifier = Modifier.height(2.dp))
+                        Spacer(modifier = Modifier.height(2.dp))
 
-                    Text(
-                        text = user.email,
-                        style = TextStyle(
-                            fontSize = 14.sp,
-                            fontFamily = FontFamily(
-                                Font(
-                                    R.font.googlesansdisplay_regular,
-                                    FontWeight.Normal
-                                )
+                        Text(
+                            text = user.email,
+                            style = TextStyle(
+                                fontSize = 14.sp,
+                                fontFamily = FontFamily(
+                                    Font(
+                                        R.font.googlesansdisplay_regular,
+                                        FontWeight.Normal
+                                    )
+                                ),
+                                color = Color.Gray,
+                                letterSpacing = (0.8).sp
                             ),
-                            color = Color.Gray,
-                            letterSpacing = (0.8).sp
-                        ),
-                        maxLines = 1,
-                        overflow = TextOverflow.Ellipsis
-                    )
+                            maxLines = 1,
+                            overflow = TextOverflow.Ellipsis
+                        )
+                    }
                 }
             }
         } else {
@@ -538,7 +478,7 @@ private fun UserDetails(context: Context, profileViewModel: ProfileViewModel = v
 // Row style for options
 @Composable
 private fun OptionsItemStyle(item: OptionsData, context: Context, navController: NavController, profileViewModel: ProfileViewModel = viewModel()) {
-    val user = profileViewModel.user.value
+    val user = profileViewModel.userDetails.collectAsState()
 
     Box(
         modifier = Modifier
@@ -570,8 +510,8 @@ private fun OptionsItemStyle(item: OptionsData, context: Context, navController:
             // Icon
             Icon(
                 modifier = Modifier
-                    .size(32.dp),
-                imageVector = item.icon,
+                    .size(24.dp),
+                painter = painterResource(id = item.icon),
                 contentDescription = item.title,
                 tint = MaterialTheme.colors.primary
             )
@@ -633,7 +573,7 @@ private fun prepareOptionsData() {
 
     optionsList.add(
         OptionsData(
-            icon = appIcons.Person,
+            icon = R.drawable.ic_profile,
             title = "Account",
             subTitle = "Manage your account"
         )
@@ -641,7 +581,7 @@ private fun prepareOptionsData() {
 
     optionsList.add(
         OptionsData(
-            icon = appIcons.ThumbUp,
+            icon = R.drawable.ic_sliders,
             title = "My Dashboard",
             subTitle = "Manage additional account settings"
         )
@@ -649,7 +589,7 @@ private fun prepareOptionsData() {
 
     optionsList.add(
         OptionsData(
-            icon = appIcons.ShoppingCart,
+            icon = R.drawable.ic_truck,
             title = "Orders",
             subTitle = "Orders history"
         )
@@ -657,7 +597,7 @@ private fun prepareOptionsData() {
 
     optionsList.add(
         OptionsData(
-            icon = appIcons.Person,
+            icon = R.drawable.ic_mail,
             title = "Addresses",
             subTitle = "Your saved addresses"
         )
@@ -665,7 +605,7 @@ private fun prepareOptionsData() {
 
     optionsList.add(
         OptionsData(
-            icon = appIcons.Star,
+            icon = R.drawable.ic_card,
             title = "Saved Cards",
             subTitle = "Your saved debit/credit cards"
         )
@@ -673,7 +613,7 @@ private fun prepareOptionsData() {
 
     optionsList.add(
         OptionsData(
-            icon = appIcons.Settings,
+            icon = R.drawable.ic_settings,
             title = "Settings",
             subTitle = "App notification settings"
         )
@@ -681,7 +621,7 @@ private fun prepareOptionsData() {
 
     optionsList.add(
         OptionsData(
-            icon = appIcons.Info,
+            icon = R.drawable.ic_help,
             title = "Help Center",
             subTitle = "FAQs and customer support"
         )
@@ -689,7 +629,7 @@ private fun prepareOptionsData() {
 
     optionsList.add(
         OptionsData(
-            icon = appIcons.Build,
+            icon = R.drawable.ic_coupon,
             title = "Offers and Coupons",
             subTitle = "Offers and coupon codes for you"
         )
@@ -697,19 +637,11 @@ private fun prepareOptionsData() {
 
     optionsList.add(
         OptionsData(
-            icon = appIcons.Abc,
+            icon = R.drawable.ic_sign_out,
             title = "Sign Out",
             subTitle = "Sign out from the app"
         )
     )
-
-    optionsList.add(
-        OptionsData(
-            icon = appIcons.Abc,
-            title = "",
-            subTitle = ""
-        )
-    )
 }
 
-data class OptionsData(val icon: ImageVector, val title: String, val subTitle: String)
+data class OptionsData(val icon: Int, val title: String, val subTitle: String)

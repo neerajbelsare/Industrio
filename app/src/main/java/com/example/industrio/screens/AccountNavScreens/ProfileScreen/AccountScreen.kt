@@ -269,55 +269,61 @@ fun AccountScreen(navController: NavController, accountViewModel: AccountViewMod
                 )
             )
 
-            Row(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .clip(RoundedCornerShape(10.dp))
-                    .height(64.dp)
-                    .background(Color.White)
-                    .border(1.dp, Color(0xFFDADADA), RoundedCornerShape(10.dp))
-                    .clickable(onClick = {
-                        navController.navigate(Graph.FORMS)
-                    })
-                    .padding(16.dp),
-                verticalAlignment = Alignment.CenterVertically,
-            ) {
-                Text(
-                    text = "I am a Technician",
-                    style = MaterialTheme.typography.subtitle1,
-                    modifier = Modifier.weight(1f)
-                )
-                Icon(
-                    painterResource(R.drawable.ic_arrowforward),
-                    contentDescription = "Forward",
+            if(!accountViewModel.isTechnician) {
+                Row(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .clip(RoundedCornerShape(10.dp))
+                        .height(64.dp)
+                        .background(Color.White)
+                        .border(1.dp, Color(0xFFDADADA), RoundedCornerShape(10.dp))
+                        .clickable(onClick = {
+                            navController.navigate(Graph.FORMS)
+                        })
+                        .padding(16.dp),
+                    verticalAlignment = Alignment.CenterVertically,
+                ) {
+                    Text(
+                        text = "I am a Technician",
+                        style = MaterialTheme.typography.subtitle1,
+                        modifier = Modifier.weight(1f)
+                    )
+                    Icon(
+                        painterResource(R.drawable.ic_arrowforward),
+                        contentDescription = "Forward",
 
-                )
+                        )
+                }
             }
 
+
             Spacer(modifier = Modifier.height(8.dp))
-            Row(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .clip(RoundedCornerShape(10.dp))
-                    .height(64.dp)
-                    .background(Color.White)
-                    .border(1.dp, Color(0xFFDADADA), RoundedCornerShape(10.dp))
-                    .clickable(onClick = {
-                        navController.navigate(FormScreen.Company.route)
-                    })
-                    .padding(16.dp),
-                verticalAlignment = Alignment.CenterVertically
-            ) {
-                Text(
-                    text = "I own a Company",
-                    style = MaterialTheme.typography.subtitle1,
-                    modifier = Modifier.weight(1f)
-                )
-                Icon(
-                    painterResource(R.drawable.ic_arrowforward),
-                    contentDescription = "Forward",
-                    tint = Color(0xFFAFAFAF)
-                )
+
+            if(!accountViewModel.isCompany) {
+                Row(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .clip(RoundedCornerShape(10.dp))
+                        .height(64.dp)
+                        .background(Color.White)
+                        .border(1.dp, Color(0xFFDADADA), RoundedCornerShape(10.dp))
+                        .clickable(onClick = {
+                            navController.navigate(FormScreen.Company.route)
+                        })
+                        .padding(16.dp),
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+                    Text(
+                        text = "I own a Company",
+                        style = MaterialTheme.typography.subtitle1,
+                        modifier = Modifier.weight(1f)
+                    )
+                    Icon(
+                        painterResource(R.drawable.ic_arrowforward),
+                        contentDescription = "Forward",
+                        tint = Color(0xFFAFAFAF)
+                    )
+                }
             }
 
             Spacer(modifier = Modifier.height(8.dp))

@@ -70,11 +70,11 @@ fun SignInScreen(navController: NavController, signInViewModel: SignInViewModel 
             .fillMaxSize()
             .padding(horizontal = 16.dp)
     ) {
-            Image(
-                painter = painterResource(R.drawable.logo),
-                contentDescription = "Industrio Icon",
-                modifier = Modifier.size(130.dp).align(CenterHorizontally).padding(top = 30.dp)
-            )
+        Image(
+            painter = painterResource(R.drawable.logo),
+            contentDescription = "Industrio Icon",
+            modifier = Modifier.size(110.dp).align(CenterHorizontally).padding(top = 30.dp)
+        )
 
         Text(
             text = "You must Sign In to Continue",
@@ -105,7 +105,7 @@ fun SignInScreen(navController: NavController, signInViewModel: SignInViewModel 
             ),
             leadingIcon = {
                 Icon(
-                    painter = painterResource(R.drawable.ic_profile),
+                    painter = painterResource(R.drawable.ic_mail),
                     contentDescription = "Email Icon",
                     tint = Color(0xFFAFAFAF)
                 )
@@ -239,7 +239,7 @@ fun SignInScreen(navController: NavController, signInViewModel: SignInViewModel 
                 modifier = Modifier.width(28.dp)
             )
 
-            Text(text = "   Sign Up with Google",
+            Text(text = "   Log In with Google",
                 textAlign = TextAlign.Center,
             fontSize = 15.sp
             )
@@ -263,7 +263,7 @@ fun SignInScreen(navController: NavController, signInViewModel: SignInViewModel 
                 contentDescription = "Facebook Icon",
                 modifier = Modifier.width(28.dp)
             )
-            Text(text = "   Sign Up with Facebook",
+            Text(text = "   Log In with Facebook",
                 textAlign = TextAlign.Center,
                 fontSize = 15.sp)
         }

@@ -2,6 +2,7 @@ package com.example.industrio.screens.AccountNavScreens.ProfileScreen
 
 import android.net.Uri
 import android.util.Log
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
@@ -15,6 +16,8 @@ import com.google.firebase.firestore.FirebaseFirestoreException
 import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.ktx.Firebase
 import com.google.firebase.storage.ktx.storage
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.tasks.await
 import java.util.*
@@ -34,7 +37,10 @@ class AccountViewModel : ViewModel() {
     var isLoading by mutableStateOf(false)
     var isUpdated by mutableStateOf(false)
 
-    val user = mutableStateOf(RetrieveUser())
+    private val fdb = FirebaseFirestore.getInstance()
+    private val auth = FirebaseAuth.getInstance()
+
+    private val _userDetails = MutableStateFlow<RetrieveUser?>(null)
 
     init {
         isLoading = true
@@ -43,36 +49,42 @@ class AccountViewModel : ViewModel() {
 
     fun getData() {
         viewModelScope.launch {
-            user.value = getUserDetails()
-            val userDetails = user.value
-
-            name = userDetails.name
-            phone = userDetails.phone
-            email = userDetails.email
-            username = userDetails.username
-            password = userDetails.password
-            isCompany = userDetails.isCompany
-            isTechnician = userDetails.isTechnician
-            imageUrl = userDetails.imageUrl
+            getUserDetails()
         }
     }
 
-    suspend fun getUserDetails(): RetrieveUser {
+    private fun getUserDetails() {
+        val userId = auth.currentUser?.uid
+        if (userId != null) {
+            val userDocument = fdb.collection("users").document(userId)
 
-        val fdb = FirebaseFirestore.getInstance()
-        var about = RetrieveUser()
-        try {
-            isLoading = true
-            fdb.collection("users").get().await().map {
-                val result = it.toObject(RetrieveUser::class.java)
-                about = result
-                isLoading = false
+            viewModelScope.launch {
+                userDocument.addSnapshotListener { snapshot, exception ->
+                    if (exception != null) {
+                        // Handle error
+                    } else {
+                        val userDetails = snapshot?.toObject(RetrieveUser::class.java)
+                        _userDetails.value = userDetails
+
+                        if (userDetails != null) {
+                            username = userDetails.username
+                            name = userDetails.name
+                            email = userDetails.email
+                            phone = userDetails.phone
+                            password = userDetails.password
+                            isTechnician = userDetails.isTechnician
+                            isCompany = userDetails.isCompany
+
+                            imageUrl = userDetails.imageUrl
+
+                            isLoading = false
+                        }
+                    }
+                }
             }
-        } catch (e: FirebaseFirestoreException) {
-            Log.d("error", "getUserDetails: $e")
         }
-        return about
     }
+
 
     fun updateUserDetails() {
         isLoading = true

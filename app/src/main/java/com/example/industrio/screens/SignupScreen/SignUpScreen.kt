@@ -16,15 +16,25 @@ import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.border
+import androidx.compose.foundation.gestures.scrollable
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.ui.Alignment
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import com.example.industrio.R
 import com.example.industrio.Utils.LoadingState
 import com.example.industrio.navigation.AuthScreen
 import com.example.industrio.navigation.nav_graph.Graph
+import com.example.industrio.ui.theme.MainColor
 import com.google.android.gms.auth.api.signin.GoogleSignIn
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions
 import com.google.android.gms.common.api.ApiException
@@ -51,58 +61,156 @@ fun SignUpScreen(navController: NavController,
         }
     }
 
+    val scrollState = rememberScrollState()
     Column(
         modifier = Modifier
+            .verticalScroll(state = scrollState)
             .fillMaxSize()
             .padding(horizontal = 16.dp),
-        verticalArrangement = Arrangement.Bottom
     ) {
-        Text(
-            text = "Sign Up",
-            style = MaterialTheme.typography.h4,
-            modifier = Modifier.padding(bottom = 16.dp)
+        Image(
+            painter = painterResource(R.drawable.logo),
+            contentDescription = "Industrio Icon",
+            modifier = Modifier.size(110.dp).align(Alignment.CenterHorizontally).padding(top = 30.dp)
         )
+
+        Text(
+            text = "Create an Industrio Account",
+            style = MaterialTheme.typography.h6,
+            modifier = Modifier.fillMaxWidth().padding(bottom = 30.dp, top = 25.dp),
+            textAlign = TextAlign.Center,
+        )
+        Text(
+            text = "Please enter your details to sign up",
+            modifier = Modifier.fillMaxWidth(),
+            textAlign = TextAlign.Center,
+            color = Color(0xFF919191)
+        )
+
+        Text(
+            text = "Name",
+            fontWeight = FontWeight.Bold,
+            color = Color(0xFF818181),
+            modifier = Modifier.padding(top = 40.dp, bottom = 10.dp),
+        )
+
         OutlinedTextField(
             value = signUpViewModel.name,
             onValueChange = { signUpViewModel.name = it },
-            label = { Text("Name") },
+            label = { Text("Name",
+                color = Color(0xFFAFAFAF),)},
             keyboardOptions = KeyboardOptions(
                 keyboardType = KeyboardType.Text,
                 imeAction = ImeAction.Next
             ),
-            modifier = Modifier.fillMaxWidth()
+            leadingIcon = {
+                Icon(
+                    painter = painterResource(R.drawable.ic_profile),
+                    contentDescription = "Account Icon",
+                    tint = Color(0xFFAFAFAF)
+                )
+            },
+            modifier = Modifier.fillMaxWidth(),
+
+            colors = TextFieldDefaults.outlinedTextFieldColors(
+            focusedBorderColor = MainColor,
+            unfocusedBorderColor = Color(0xFFC7C7C7)
+            ),
+            shape = RoundedCornerShape(15.dp)
+        )
+
+        Text(
+            text = "Phone Number",
+            fontWeight = FontWeight.Bold,
+            color = Color(0xFF818181),
+            modifier = Modifier.padding(top = 20.dp),
         )
         OutlinedTextField(
             value = signUpViewModel.phone,
             onValueChange = { signUpViewModel.phone = it },
-            label = { Text("Phone Number") },
+            label = { Text("Phone Number",
+                color = Color(0xFFAFAFAF),) },
             keyboardOptions = KeyboardOptions(
                 keyboardType = KeyboardType.Number,
                 imeAction = ImeAction.Next,
             ),
-            modifier = Modifier.fillMaxWidth()
+            leadingIcon = {
+                Icon(
+                    painter = painterResource(R.drawable.ic_phone),
+                    contentDescription = "Phone Icon",
+                    tint = Color(0xFFAFAFAF)
+                )
+            },
+            modifier = Modifier.fillMaxWidth(),
+
+            colors = TextFieldDefaults.outlinedTextFieldColors(
+                focusedBorderColor = MainColor,
+                unfocusedBorderColor = Color(0xFFC7C7C7)
+            ),
+            shape = RoundedCornerShape(15.dp)
+        )
+
+        Text(
+            text = "Email Address",
+            fontWeight = FontWeight.Bold,
+            color = Color(0xFF818181),
+            modifier = Modifier.padding(top = 20.dp),
         )
         OutlinedTextField(
             value = signUpViewModel.email,
             onValueChange = { signUpViewModel.email = it },
-            label = { Text("Email address") },
+            label = { Text("Email address",
+                color = Color(0xFFAFAFAF),) },
             keyboardOptions = KeyboardOptions(
                 keyboardType = KeyboardType.Email,
                 imeAction = ImeAction.Next
             ),
-            modifier = Modifier.fillMaxWidth()
+            leadingIcon = {
+                Icon(
+                    painter = painterResource(R.drawable.ic_mail),
+                    contentDescription = "Email Icon",
+                    tint = Color(0xFFAFAFAF)
+                )
+            },
+            modifier = Modifier.fillMaxWidth(),
+
+            colors = TextFieldDefaults.outlinedTextFieldColors(
+                focusedBorderColor = MainColor,
+                unfocusedBorderColor = Color(0xFFC7C7C7)
+            ),
+            shape = RoundedCornerShape(15.dp)
+        )
+
+        Text(
+            text = "Password",
+            fontWeight = FontWeight.Bold,
+            color = Color(0xFF818181),
+            modifier = Modifier.padding(top = 20.dp),
         )
         OutlinedTextField(
             value = signUpViewModel.password,
             onValueChange = { signUpViewModel.password = it },
-            label = { Text("Password") },
+            label = { Text("Password",
+                color = Color(0xFFAFAFAF),) },
             keyboardOptions = KeyboardOptions(
                 keyboardType = KeyboardType.Password,
                 imeAction = ImeAction.Done
             ),
+            leadingIcon = {
+                Icon(
+                    painter = painterResource(R.drawable.ic_lock),
+                    contentDescription = "Password Icon",
+                    tint = Color(0xFFAFAFAF)
+                )
+            },
             visualTransformation = PasswordVisualTransformation(),
-            modifier = Modifier
-                .fillMaxWidth()
+            modifier = Modifier.fillMaxWidth(),
+
+            colors = TextFieldDefaults.outlinedTextFieldColors(
+                focusedBorderColor = MainColor,
+                unfocusedBorderColor = Color(0xFFC7C7C7)
+            ),
+            shape = RoundedCornerShape(15.dp)
         )
         if (signUpViewModel.isLoading) {
             Button(
@@ -122,7 +230,10 @@ fun SignUpScreen(navController: NavController,
             Button(
                 onClick = { signUpViewModel.signUp(NewUser(signUpViewModel.name, signUpViewModel.phone, signUpViewModel.email, signUpViewModel.password)) },
                 modifier = Modifier
-                    .fillMaxWidth(),
+                    .fillMaxWidth()
+                    .padding(top = 20.dp)
+                    .height(50.dp)
+                    .clip(RoundedCornerShape(8.dp)),
                 enabled = allInputsFilled
             ) {
                 Text("Sign Up")
@@ -162,49 +273,60 @@ fun SignUpScreen(navController: NavController,
         Spacer(modifier = Modifier
             .height(1.dp))
 
-        Row(
-            horizontalArrangement = Arrangement.Center,
-            modifier = Modifier
-            .fillMaxWidth()) {
-            Button(
-                modifier = Modifier,
-                elevation = ButtonDefaults.elevation(0.dp, 0.dp),
-                colors = ButtonDefaults.buttonColors(
-                    backgroundColor = Color.Transparent
-                ),
-                onClick = {
-                    val gso = GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
-                        .requestIdToken(token)
-                        .requestEmail()
-                        .build()
+        TextButton(
+            modifier = Modifier.fillMaxWidth()
+                .border(width = 1.dp, color = Color(0xFFC7C7C7), shape = RoundedCornerShape(8.dp)),
+            elevation = ButtonDefaults.elevation(0.dp, 0.dp),
+            colors = ButtonDefaults.buttonColors(
+                backgroundColor = Color.Transparent
+            ),
+            onClick = {
+                val gso = GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
+                    .requestIdToken(token)
+                    .requestEmail()
+                    .build()
 
-                    val googleSignInClient = GoogleSignIn.getClient(context, gso)
-                    launcher.launch(googleSignInClient.signInIntent)
-                }
-            ) {
-                Image(
-                    painterResource(id = R.drawable.google_icon),
-                    contentDescription = "Google Icon"
-                )
+                val googleSignInClient = GoogleSignIn.getClient(context, gso)
+                launcher.launch(googleSignInClient.signInIntent)
             }
+        ) {
+            Image(
+                painterResource(id = R.drawable.google_icon),
+                contentDescription = "Google Icon",
+                modifier = Modifier.width(28.dp)
+            )
 
-            Button(
-                modifier = Modifier,
-                elevation = ButtonDefaults.elevation(0.dp, 0.dp),
-                colors = ButtonDefaults.buttonColors(
-                    backgroundColor = Color.Transparent
-                ),
-                onClick = {  }
-            ) {
-                Image(
-                    painterResource(id = R.drawable.facebook_icon),
-                    contentDescription = "Facebook Icon"
-                )
-            }
+            Text(text = "   Sign Up with Google",
+                textAlign = TextAlign.Center,
+                fontSize = 15.sp
+            )
         }
-        
+
         Spacer(modifier = Modifier
-            .height(1.dp))
+            .height(15.dp))
+
+        TextButton(
+            modifier = Modifier.fillMaxWidth()
+                .border(width = 1.dp, color = Color(0xFFC7C7C7), shape = RoundedCornerShape(8.dp)),
+            elevation = ButtonDefaults.elevation(0.dp, 0.dp),
+            colors = ButtonDefaults.buttonColors(
+                backgroundColor = Color.Transparent
+            ),
+            onClick = {
+            }
+        ) {
+            Image(
+                painterResource(id = R.drawable.facebook_icon),
+                contentDescription = "Facebook Icon",
+                modifier = Modifier.width(28.dp)
+            )
+            Text(text = "   Sign Up with Facebook",
+                textAlign = TextAlign.Center,
+                fontSize = 15.sp)
+        }
+
+        Spacer(modifier = Modifier
+            .height(15.dp))
 
         Row(
             modifier = Modifier.fillMaxWidth(),

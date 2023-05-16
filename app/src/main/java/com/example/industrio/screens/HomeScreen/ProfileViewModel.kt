@@ -12,6 +12,8 @@ import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.FirebaseFirestoreException
 import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.ktx.Firebase
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.tasks.await
 
@@ -19,36 +21,36 @@ class ProfileViewModel() : ViewModel() {
     var isLoading by mutableStateOf(false)
     var imageUrl by mutableStateOf("")
 
-    val user = mutableStateOf(RetrieveUser())
+    private val firestore = FirebaseFirestore.getInstance()
+    private val auth = FirebaseAuth.getInstance()
+
+    private val _userDetails = MutableStateFlow<RetrieveUser?>(null)
+    val userDetails = _userDetails.asStateFlow()
 
     init {
-        isLoading = true
-        getData()
-    }
-    private fun getData() {
-        viewModelScope.launch {
-            user.value = getUserDetails()
-            val userDetails = user.value
-
-            imageUrl = userDetails.imageUrl
-        }
+        loadUserDetails()
     }
 
-    suspend fun getUserDetails(): RetrieveUser {
+    private fun loadUserDetails() {
+        val userId = auth.currentUser?.uid
+        if (userId != null) {
+            val userDocument = firestore.collection("users").document(userId)
 
-        val fdb = FirebaseFirestore.getInstance()
-        var about = RetrieveUser()
-        try {
-            isLoading = true
-            fdb.collection("users").get().await().map {
-                val result = it.toObject(RetrieveUser::class.java)
-                about = result
-                isLoading = false
+            viewModelScope.launch {
+                userDocument.addSnapshotListener { snapshot, exception ->
+                    if (exception != null) {
+                        // Handle error
+                    } else {
+                        val userDetails = snapshot?.toObject(RetrieveUser::class.java)
+                        _userDetails.value = userDetails
+
+                        if (userDetails != null) {
+                            imageUrl = userDetails.imageUrl
+                        }
+                    }
+                }
             }
-        } catch (e: FirebaseFirestoreException) {
-            Log.d("error", "getUserDetails: $e")
         }
-        return about
     }
 }
 
