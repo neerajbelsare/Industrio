@@ -181,6 +181,33 @@ fun TechnicianForm(navController: NavController,
             Spacer(modifier = Modifier.height(15.dp))
 
             Text(
+                text = "Address",
+                modifier = Modifier
+                    .padding(start = 3.dp, bottom = 10.dp),
+                color = Color(0xFF474747),
+                fontFamily = FontFamily(
+                    Font(
+                        R.font.googlesansdisplay_bold,
+                        FontWeight.Bold
+                    )
+                )
+            )
+            OutlinedTextField(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(start = 5.dp, end = 5.dp),
+                value = technicianFormViewModel.address,
+                onValueChange = { technicianFormViewModel.address = it },
+                colors = TextFieldDefaults.outlinedTextFieldColors(
+                    focusedBorderColor = MainColor,
+                    unfocusedBorderColor = Color(0xFFDADADA),
+                ),
+                maxLines = 1
+            )
+
+            Spacer(modifier = Modifier.height(15.dp))
+
+            Text(
                 text = "Availability(office hours, on-call hours)",
                 modifier = Modifier
                     .padding(start = 3.dp, bottom = 10.dp),
@@ -247,10 +274,13 @@ fun TechnicianForm(navController: NavController,
             items.add("11:30 p.m.")
 
             val disabledValue = "B"
-            Box(modifier = Modifier
-                .fillMaxSize()
-                .wrapContentSize(Alignment.Center)) {
-                Text(technicianFormViewModel.startTime,
+            Box(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .wrapContentSize(Alignment.Center)
+            ) {
+                Text(
+                    technicianFormViewModel.startTime,
                     modifier = Modifier
                         .height(40.dp)
                         .width(150.dp)
@@ -281,10 +311,11 @@ fun TechnicianForm(navController: NavController,
             }
             Spacer(modifier = Modifier.height(18.dp))
 
-            Text(text = "to",
-            modifier = Modifier
-                .fillMaxWidth()
-                .wrapContentSize(align = Alignment.Center)
+            Text(
+                text = "to",
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .wrapContentSize(align = Alignment.Center)
             )
             Spacer(modifier = Modifier.height(18.dp))
 
@@ -340,10 +371,13 @@ fun TechnicianForm(navController: NavController,
             items1.add("11:30 p.m.")
 
             val disabledValue1 = "B"
-            Box(modifier = Modifier
-                .fillMaxSize()
-                .wrapContentSize(Alignment.Center)) {
-                Text(technicianFormViewModel.endTime,
+            Box(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .wrapContentSize(Alignment.Center)
+            ) {
+                Text(
+                    technicianFormViewModel.endTime,
                     modifier = Modifier
                         .height(40.dp)
                         .width(150.dp)
@@ -433,47 +467,111 @@ fun TechnicianForm(navController: NavController,
 
             Spacer(modifier = Modifier.height(28.dp))
 
-            if (technicianFormViewModel.isLoading) {
-                Button(
-                    onClick = {},
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .height(40.dp),
-                    shape = RoundedCornerShape(40.dp),
-                    enabled = allInputsFilled
-                ) {
-                    CircularProgressIndicator(
-                        modifier = Modifier
-                            .size(30.dp),
-                        color = Color.White,
-                        strokeWidth = 3.dp
+            Text(
+                text = "Categories",
+                modifier = Modifier
+                    .padding(start = 3.dp, bottom = 10.dp),
+                color = Color(0xFF474747),
+                fontFamily = FontFamily(
+                    Font(
+                        R.font.googlesansdisplay_bold,
+                        FontWeight.Bold
                     )
-                }
-            } else {
-                Button(
-                    onClick = {
-                        technicianFormViewModel.insertTechnicianUser(
-                            TechnicianInfo(technicianFormViewModel.name,
-                            technicianFormViewModel.speciality, technicianFormViewModel.email, technicianFormViewModel.phone,
-                        technicianFormViewModel.startTime, technicianFormViewModel.endTime, technicianFormViewModel.experience,
-                        technicianFormViewModel.qualification)
-                        )
-                        navController.navigate(Graph.TECHNICIAN) },
+                )
+            )
 
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .height(40.dp),
-                    shape = RoundedCornerShape(40.dp),
-                    enabled = allInputsFilled
+            val checkboxOptions = listOf(
+                "Plumbing",
+                "Equipment Installation",
+                "Maintenance and Repairs",
+                "Preventive Maintenance",
+                "Machinery Alignment",
+                "Piping Systems",
+                "HVAC Systems",
+                "Conveyor Systems",
+                "Welding and Fabrication",
+                "Instrumentation and Control Systems",
+                "Waste Management Systems",
+                "Energy Management",
+                "Safety Systems"
+            )
+
+            checkboxOptions.forEach { option ->
+                Row(
+                    Modifier.padding(vertical = 4.dp),
+                    verticalAlignment = Alignment.CenterVertically
                 ) {
-                    Text("Next")
+                    Checkbox(
+                        checked = technicianFormViewModel.categories.contains(option),
+                        onCheckedChange = { checked ->
+                            if (checked) {
+                                technicianFormViewModel.categories.add(option)
+                            } else {
+                                technicianFormViewModel.categories.remove(option)
+                            }
+                        }
+                    )
+                    Text(
+                        text = option,
+                        style = MaterialTheme.typography.body1,
+                        modifier = Modifier.padding(start = 8.dp)
+                    )
                 }
             }
 
-            Spacer(modifier = Modifier.height(38.dp))
+
+                Spacer(modifier = Modifier.height(28.dp))
+
+                if (technicianFormViewModel.isLoading) {
+                    Button(
+                        onClick = {},
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .height(40.dp),
+                        shape = RoundedCornerShape(40.dp),
+                        enabled = allInputsFilled
+                    ) {
+                        CircularProgressIndicator(
+                            modifier = Modifier
+                                .size(30.dp),
+                            color = Color.White,
+                            strokeWidth = 3.dp
+                        )
+                    }
+                } else {
+                    Button(
+                        onClick = {
+                            technicianFormViewModel.insertTechnicianUser(
+                                TechnicianInfo(
+                                    technicianFormViewModel.name,
+                                    technicianFormViewModel.speciality,
+                                    technicianFormViewModel.email,
+                                    technicianFormViewModel.phone,
+                                    technicianFormViewModel.address,
+                                    technicianFormViewModel.categories,
+                                    technicianFormViewModel.startTime,
+                                    technicianFormViewModel.endTime,
+                                    technicianFormViewModel.experience,
+                                    technicianFormViewModel.qualification
+                                )
+                            )
+                            navController.navigate(Graph.TECHNICIAN)
+                        },
+
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .height(50.dp),
+                        shape = RoundedCornerShape(8.dp),
+                        enabled = allInputsFilled
+                    ) {
+                        Text("Next")
+                    }
+                }
+
+                Spacer(modifier = Modifier.height(38.dp))
+            }
         }
     }
-}
 
 class LimitInputToTwoCharactersVisualTransformation : VisualTransformation {
     override fun filter(text: AnnotatedString): TransformedText {

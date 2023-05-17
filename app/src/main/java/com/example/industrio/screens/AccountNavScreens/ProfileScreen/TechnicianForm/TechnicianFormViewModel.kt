@@ -3,6 +3,7 @@ package com.example.industrio.screens.AccountNavScreens.ProfileScreen.Technician
 import android.net.Uri
 import android.util.Log
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
@@ -26,6 +27,8 @@ class TechnicianFormViewModel: ViewModel() {
     var speciality by mutableStateOf("")
     var email by mutableStateOf("")
     var phone by mutableStateOf("")
+    var address by mutableStateOf("")
+    val categories = mutableStateListOf<String>()
     var startTime by mutableStateOf("12:00 a.m.")
     var endTime by mutableStateOf("12:00 a.m.")
     var experience by mutableStateOf("")
@@ -113,6 +116,8 @@ class TechnicianFormViewModel: ViewModel() {
             "speciality" to newTechnicianInfo.speciality,
             "email" to newTechnicianInfo.email,
             "phone" to newTechnicianInfo.phone,
+            "address" to newTechnicianInfo.address,
+            "categories" to categories,
             "startTime" to newTechnicianInfo.startTime,
             "endTime" to newTechnicianInfo.endTime,
             "rating" to 0.0,

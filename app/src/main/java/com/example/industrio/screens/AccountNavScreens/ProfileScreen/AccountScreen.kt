@@ -321,7 +321,6 @@ fun AccountScreen(navController: NavController, accountViewModel: AccountViewMod
                     Icon(
                         painterResource(R.drawable.ic_arrowforward),
                         contentDescription = "Forward",
-                        tint = Color(0xFFAFAFAF)
                     )
                 }
             }
