@@ -7,8 +7,10 @@ import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardOptions
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.*
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -65,8 +67,11 @@ fun SignInScreen(navController: NavController, signInViewModel: SignInViewModel 
     Spacer(modifier = Modifier
         .height(30.dp))
 
+    val scrollState = rememberScrollState()
+
     Column(
         modifier = Modifier
+            .verticalScroll(state = scrollState)
             .fillMaxSize()
             .padding(horizontal = 16.dp)
     ) {
@@ -161,12 +166,13 @@ fun SignInScreen(navController: NavController, signInViewModel: SignInViewModel 
             Button(
                 onClick = {},
                 modifier = Modifier
-                    .fillMaxWidth(),
+                    .fillMaxWidth()
+                    .clip(RoundedCornerShape(8.dp)),
                 enabled = allInputsFilled
             ) {
                 CircularProgressIndicator(
                     modifier = Modifier
-                        .size(30.dp),
+                        .size(50.dp),
                     color = Color.White,
                     strokeWidth = 3.dp
                 )

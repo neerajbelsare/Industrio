@@ -220,8 +220,8 @@ fun AccountScreen(navController: NavController, accountViewModel: AccountViewMod
                     onClick = {},
                     modifier = Modifier
                         .fillMaxWidth()
-                        .height(40.dp),
-                    shape = RoundedCornerShape(40.dp),
+                        .height(50.dp),
+                    shape = RoundedCornerShape(8.dp),
                     enabled = allInputsFilled
                 ) {
                     CircularProgressIndicator(
@@ -236,8 +236,8 @@ fun AccountScreen(navController: NavController, accountViewModel: AccountViewMod
                     onClick = { accountViewModel.updateUserDetails() },
                     modifier = Modifier
                         .fillMaxWidth()
-                        .height(40.dp),
-                    shape = RoundedCornerShape(40.dp),
+                        .height(50.dp),
+                    shape = RoundedCornerShape(8.dp),
                     enabled = allInputsFilled
                 ) {
                     Text("Save")
