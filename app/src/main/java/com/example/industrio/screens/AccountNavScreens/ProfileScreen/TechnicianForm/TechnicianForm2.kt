@@ -50,7 +50,7 @@ fun TechnicianForm2(navController: NavController,
         topBar = {
             CustomTopAppBarWithBackButton(
                 navController = navController,
-                appBarTitle = "Doctor Application Form",
+                appBarTitle = "Technician Application Form",
                 backgroundColor = Color.White
             )
         },

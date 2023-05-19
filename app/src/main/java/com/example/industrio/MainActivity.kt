@@ -7,9 +7,11 @@ import androidx.activity.compose.setContent
 import androidx.compose.foundation.layout.*
 import androidx.compose.material.*
 import androidx.compose.ui.Modifier
+import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.compose.rememberNavController
 import com.example.industrio.ui.theme.IndustrioTheme
 import com.example.industrio.navigation.nav_graph.SetupNavGraph
+import com.example.industrio.screens.ForumScreen.ForumViewModel
 import com.google.firebase.FirebaseApp
 
 class MainActivity : ComponentActivity() {
@@ -23,7 +25,8 @@ class MainActivity : ComponentActivity() {
                     modifier = Modifier.fillMaxSize(),
                     color = MaterialTheme.colors.background
                 ) {
-                    SetupNavGraph(navController = rememberNavController())
+                    val viewModel: ForumViewModel = viewModel()
+                    SetupNavGraph(navController = rememberNavController(), viewModel)
                 }
             }
         }

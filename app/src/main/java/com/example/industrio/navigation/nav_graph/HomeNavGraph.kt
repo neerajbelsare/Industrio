@@ -1,8 +1,12 @@
 package com.example.industrio.navigation.nav_graph
 
+import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavGraphBuilder
 import androidx.navigation.NavHostController
+import androidx.navigation.NavType
 import androidx.navigation.compose.composable
+import androidx.navigation.compose.navigation
+import androidx.navigation.navArgument
 import androidx.navigation.navigation
 import com.example.industrio.navigation.CompanyScreen
 import com.example.industrio.navigation.FormScreen
@@ -22,6 +26,10 @@ import com.example.industrio.screens.AccountNavScreens.ProfileScreen.TechnicianF
 import com.example.industrio.screens.AccountNavScreens.ProfileScreen.TechnicianForm.TechnicianForm
 import com.example.industrio.screens.AccountNavScreens.ProfileScreen.TechnicianForm.TechnicianForm2
 import com.example.industrio.screens.AccountNavScreens.SettingsScreen
+import com.example.industrio.screens.ForumScreen.ForumViewModel
+import com.example.industrio.screens.HomeScreen.MainScreen
+import com.example.industrio.screens.HomeScreen.QuestionDetailsScreen
+import com.example.industrio.screens.HomeScreen.QuestionFormScreen
 
 fun NavGraphBuilder.profileNavGraph(navController: NavHostController) {
     navigation(
@@ -95,6 +103,36 @@ fun NavGraphBuilder.companyNavGraph(navController: NavHostController) {
         }
         composable(route = CompanyScreen.CompanyConfirm.route) {
             CompanyConfirmScreen()
+        }
+    }
+}
+
+fun NavGraphBuilder.forumNavGraph(navController: NavHostController, viewModel: ForumViewModel) {
+
+    navigation(
+        route = Graph.FORUM,
+        startDestination = "main"
+    ) {
+        composable("main") {
+            MainScreen(viewModel, navController)
+        }
+        composable("questionForm") {
+            QuestionFormScreen(
+                viewModel = viewModel,
+                navigateBack = { navController.popBackStack() }
+            )
+        }
+        composable(
+            "questionDetails/{questionId}",
+            arguments = listOf(navArgument("questionId") { type = NavType.StringType })
+        ) { backStackEntry ->
+            val questionId = backStackEntry.arguments?.getString("questionId")
+            val question = viewModel.questions.value?.find { it.id == questionId }
+            if (question != null) {
+                QuestionDetailsScreen(viewModel, question)
+            } else {
+                // Handle question not found case
+            }
         }
     }
 }

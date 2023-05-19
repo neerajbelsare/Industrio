@@ -21,10 +21,12 @@ import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import com.example.industrio.BottomBarScreen
 import com.example.industrio.navigation.nav_graph.Graph
+import com.example.industrio.navigation.nav_graph.forumNavGraph
 import com.example.industrio.navigation.nav_graph.profileNavGraph
+import com.example.industrio.screens.ForumScreen.ForumViewModel
 
 @Composable
-fun HomeScreen() {
+fun HomeScreen(viewModel: ForumViewModel) {
     val navController = rememberNavController()
 
     Scaffold(
@@ -50,6 +52,7 @@ fun HomeScreen() {
             }
 
             profileNavGraph(navController = navController)
+            forumNavGraph(navController = navController, viewModel)
         }
     }
 }
