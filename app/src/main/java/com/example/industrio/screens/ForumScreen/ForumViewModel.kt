@@ -40,11 +40,12 @@ class ForumViewModel : ViewModel() {
             }
     }
 
-    fun postQuestion(category: String, text: String, userId: String) {
+    fun postQuestion(category: List<String>, title: String, description: String, userId: String) {
         val question = Question(
             id = UUID.randomUUID().toString(),
             category = category,
-            text = text,
+            title = title,
+            description = description,
             userId = userId,
             timestamp = System.currentTimeMillis()
         )

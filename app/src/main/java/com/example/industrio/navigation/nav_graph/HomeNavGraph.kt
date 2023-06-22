@@ -27,6 +27,7 @@ import com.example.industrio.screens.AccountNavScreens.ProfileScreen.TechnicianF
 import com.example.industrio.screens.AccountNavScreens.ProfileScreen.TechnicianForm.TechnicianForm2
 import com.example.industrio.screens.AccountNavScreens.SettingsScreen
 import com.example.industrio.screens.ForumScreen.ForumViewModel
+import com.example.industrio.screens.HomeScreen.ChatScreen
 import com.example.industrio.screens.HomeScreen.MainScreen
 import com.example.industrio.screens.HomeScreen.QuestionDetailsScreen
 import com.example.industrio.screens.HomeScreen.QuestionFormScreen
@@ -114,7 +115,7 @@ fun NavGraphBuilder.forumNavGraph(navController: NavHostController, viewModel: F
         startDestination = "main"
     ) {
         composable("main") {
-            MainScreen(viewModel, navController)
+            ChatScreen(viewModel, navController)
         }
         composable("questionForm") {
             QuestionFormScreen(

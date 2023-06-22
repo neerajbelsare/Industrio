@@ -48,7 +48,7 @@ fun HomeScreen(viewModel: ForumViewModel) {
                 ExploreScreen(navController = navController)
             }
             composable(route = BottomBarScreen.Chat.route) {
-                ChatScreen(navController = navController)
+                ChatScreen(viewModel, navController = navController)
             }
 
             profileNavGraph(navController = navController)

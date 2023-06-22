@@ -1,5 +1,6 @@
 package com.example.industrio.screens.HomeScreen
 
+import android.content.ClipData
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
@@ -16,6 +17,9 @@ import android.content.Context
 import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
+import android.text.SpannableStringBuilder
+import android.text.style.ForegroundColorSpan
+import androidx.activity.OnBackPressedCallback
 import androidx.activity.compose.setContent
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
@@ -23,6 +27,7 @@ import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.horizontalScroll
 import androidx.compose.foundation.interaction.collectIsDraggedAsState
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
@@ -31,10 +36,13 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.text.InlineTextContent
+import androidx.compose.foundation.text.appendInlineContent
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
+import androidx.compose.material.icons.filled.Done
 import androidx.compose.material.icons.filled.Notifications
 import androidx.compose.material.icons.outlined.*
 import androidx.compose.runtime.*
@@ -81,6 +89,18 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.withContext
 import androidx.compose.runtime.livedata.observeAsState
+import androidx.compose.ui.geometry.Offset
+import androidx.compose.ui.graphics.Brush
+import androidx.compose.ui.graphics.Shader
+import androidx.compose.ui.graphics.TileMode
+import androidx.compose.ui.graphics.TransformOrigin
+import androidx.compose.ui.graphics.graphicsLayer
+import androidx.compose.ui.graphics.toArgb
+import androidx.compose.ui.text.AnnotatedString
+import androidx.compose.ui.text.ExperimentalTextApi
+import androidx.compose.ui.text.buildAnnotatedString
+
+
 
 @Composable
 fun IndicatorDot(
@@ -267,7 +287,7 @@ fun HomeScreen(navController: NavController, profileViewModel: ProfileViewModel 
             .height(50.dp))
 
         Text(
-            text = "Top Categories",
+            text = "Categories",
             modifier = Modifier
                 .fillMaxWidth()
                 .padding(start = 40.dp),
@@ -279,8 +299,33 @@ fun HomeScreen(navController: NavController, profileViewModel: ProfileViewModel 
         Spacer(modifier = Modifier
             .height(20.dp))
 
+        val itemList = listOf( ItemData(1, "Plumbing", R.drawable.ic_plumbing),
+            ItemData(2, "Equipment \nInstallation", R.drawable.ic_equipment),
+            ItemData(3, "Maintenance \nand Repairs", R.drawable.ic_repair),
+            ItemData(4, "Preventive \nMaintenance", R.drawable.ic_preventive),
+            ItemData(5, "Machinery \nAlignment", R.drawable.ic_align),
+            ItemData(6, "Piping \nSystems", R.drawable.ic_lock),
+            ItemData(7, "HVAC \nSystems", R.drawable.ic_hvac),
+            ItemData(8, "Conveyor \nSystems", R.drawable.ic_conveyer),
+            ItemData(9, "Welding and \nFabrication", R.drawable.ic_welding),
+            ItemData(10, "Instrumentation \nand Control \nSystems", R.drawable.ic_instrument),
+            ItemData(11, "Waste \nManagement \nSystems", R.drawable.ic_waste),
+            ItemData(12, "Energy \nManagement", R.drawable.ic_energy),
+            ItemData(13, "Safety \nSystems", R.drawable.ic_safety))
+
+        Row(
+            modifier = Modifier
+                .horizontalScroll(rememberScrollState())
+                .padding(start = 30.dp)
+        ) {
+            itemList.forEach { item ->
+               Item(item = item)
+                Spacer(modifier = Modifier.width(16.dp))
+            }
+        }
+
         Spacer(modifier = Modifier
-            .height(30.dp))
+            .height(10.dp))
 
         val images = listOf(
             R.drawable.feature1, R.drawable.feature2, R.drawable.feature3, R.drawable.feature4
@@ -311,96 +356,54 @@ fun HomeScreen(navController: NavController, profileViewModel: ProfileViewModel 
 }
 
 @Composable
-fun MainScreen(viewModel: ForumViewModel, navController: NavController) {
-    val questions by viewModel.questions.observeAsState(emptyList())
+fun Item(item: ItemData) {
     Column(
         modifier = Modifier
-            .fillMaxSize()
-            .background(Color.White),
-        horizontalAlignment = Alignment.CenterHorizontally,
+            .wrapContentSize()
+            .padding(8.dp),
+        horizontalAlignment = Alignment.CenterHorizontally
     ) {
-        Row(
+        Box(
             modifier = Modifier
-                .height(100.dp)
-                .fillMaxWidth()
-                .padding(horizontal = 16.dp)
-                .background(Color.White),
-            verticalAlignment = Alignment.CenterVertically
-        ) {
-            OutlinedTextField(
-                modifier = Modifier
-                    .weight(1f)
-                    .padding(end = 8.dp)
-                    .border(
-                        BorderStroke(1.dp, Color.LightGray),
-                        shape = RoundedCornerShape(40.dp)
-                    ),
-                value = "",
-                onValueChange = {  },
-                placeholder = { Text("Search") },
-                colors = TextFieldDefaults.textFieldColors(
-                    backgroundColor = MaterialTheme.colors.surface,
-                    focusedIndicatorColor = Color.Transparent,
-                    unfocusedIndicatorColor = Color.Transparent,
-                    disabledIndicatorColor = Color.Transparent
-                ),
-                textStyle = MaterialTheme.typography.body1
-            )
-
-            IconButton(
-                onClick = {  },
-                modifier = Modifier
-                    .size(48.dp)
-                    .border(
-                        BorderStroke(1.dp, Color.LightGray),
-                        shape = RoundedCornerShape(40.dp)
+                .size(80.dp)
+                .clip(CircleShape)
+                .background(
+                    brush = Brush.linearGradient(
+                        colors = listOf(Color(0xFFFFA03A), Color(0xFFEE583D)),
+                        start = Offset(0f, 0f),
+                        end = Offset(100f, 100f)
                     )
-            ) {
-                Icon(
-                    imageVector = Icons.Default.Notifications,
-                    contentDescription = "Notifications",
-                    tint = MaterialTheme.colors.onSurface
-                )
-            }
+                ),
+            contentAlignment = Alignment.Center
+        ) {
+            Icon(
+                painterResource(id = item.icon),
+                contentDescription = "Item Icon",
+                tint = Color(0xffffffff)
+            )
         }
 
-        Spacer(
-            modifier = Modifier
-                .height(30.dp)
-        )
+        Spacer(modifier = Modifier.height(10.dp))
 
         Text(
-            text = "Discussion Forum",
-            modifier = Modifier
-                .fillMaxWidth(),
+            text = item.title,
+            modifier = Modifier.padding(top = 4.dp),
             textAlign = TextAlign.Center,
-            fontSize = 24.sp,
-            fontWeight = FontWeight.Black
-        )
-
-        Text(
-            text = "Engage, learn, and inspire through discussions",
-            modifier = Modifier
-                .fillMaxWidth().padding(top = 15.dp),
-            textAlign = TextAlign.Center,
-            fontSize = 14.sp,
-            color = Color.Gray
-        )
-
-        if (questions.isNotEmpty()) {
-            QuestionList(questions)
-        } else {
-            Text("No questions found.")
-        }
-        FloatingActionButton(
-            onClick = { navController.navigate("questionForm") },
-            content = { Icon(Icons.Filled.Add, "Add") },
-            modifier = Modifier
-                .padding(16.dp)
-                .align(Alignment.End) // Aligns the floating button to the bottom right
+            fontWeight = FontWeight.Medium,
+            color = Color(0xFF9C9C9C)
         )
     }
 }
+
+
+data class ItemData(val id: Int, val title: String, val icon: Int)
+
+@OptIn(ExperimentalTextApi::class)
+@Composable
+fun MainScreen(viewModel: ForumViewModel, navController: NavController) {
+
+}
+
 
 @Composable
 fun QuestionList(questions: List<Question>) {
@@ -423,21 +426,11 @@ fun QuestionItem(question: Question) {
             modifier = Modifier.padding(16.dp)
         ) {
             Text(
-                text = question.text,
+                text = question.title,
                 style = MaterialTheme.typography.body1
             )
             Text(
                 text = "Category: ${question.category}",
-                style = MaterialTheme.typography.caption,
-                color = Color.Gray
-            )
-            Text(
-                text = "User ID: ${question.userId}",
-                style = MaterialTheme.typography.caption,
-                color = Color.Gray
-            )
-            Text(
-                text = "Timestamp: ${question.timestamp}",
                 style = MaterialTheme.typography.caption,
                 color = Color.Gray
             )
@@ -468,60 +461,84 @@ fun QuestionFormScreen(viewModel: ForumViewModel, navigateBack: () -> Unit) {
         "Safety Systems"
     )
 
-    var selectedCategory by remember { mutableStateOf(categories[0]) }
-    var questionText by remember { mutableStateOf("") }
+    val selectedCategories = remember { mutableStateListOf<String>() }
 
+    var questionTitle by remember { mutableStateOf("") }
+    var questionDesc by remember { mutableStateOf("") }
 
+    val scrollState = rememberScrollState()
 
-    Column(
-        modifier = Modifier
-            .padding(16.dp)
-            .fillMaxSize(),
-        verticalArrangement = Arrangement.Center,
-        horizontalAlignment = Alignment.CenterHorizontally
-    ) {
-        Text("Post a Question", style = MaterialTheme.typography.h5)
+    Column(modifier = Modifier.verticalScroll(scrollState)) {
+
+        Spacer(modifier = Modifier.height(10.dp))
+
+        OutlinedTextField(
+            value = questionTitle,
+            onValueChange = { questionTitle = it },
+            label = { Text("Question Title", fontSize = 24.sp) },
+            modifier = Modifier.fillMaxWidth(),
+            colors = TextFieldDefaults.outlinedTextFieldColors(
+                focusedBorderColor = Color.Transparent,
+                unfocusedBorderColor = Color.Transparent
+            ),
+            maxLines = 1,
+            singleLine = true
+        )
+
         Spacer(modifier = Modifier.height(16.dp))
-        DropdownMenu(
-            expanded = false,
-            onDismissRequest = {},
-            modifier = Modifier.fillMaxWidth()
-        ) {
-            categories.forEach { category ->
-                DropdownMenuItem(
-                    onClick = {
-                        selectedCategory = category
+
+        OutlinedTextField(
+            value = questionDesc,
+            onValueChange = { questionDesc = it },
+            label = { Text("Question Description", fontSize = 16.sp) },
+            modifier = Modifier.fillMaxWidth(),
+            colors = TextFieldDefaults.outlinedTextFieldColors(
+                focusedBorderColor = Color.Transparent,
+                unfocusedBorderColor = Color.Transparent
+            ),
+        )
+
+        Spacer(modifier = Modifier.height(16.dp))
+
+        categories.forEach { category ->
+            Row(
+                Modifier.padding(vertical = 4.dp)
+            ) {
+                Checkbox(
+                    checked = selectedCategories.contains(category),
+                    onCheckedChange = { checked ->
+                        if (checked) {
+                            selectedCategories.add(category)
+                        } else {
+                            selectedCategories.remove(category)
+                        }
                     }
-                ) {
-                    Text(text = category)
-                }
+                )
+                Text(
+                    text = category,
+                    style = MaterialTheme.typography.body1,
+                    modifier = Modifier.padding(start = 8.dp)
+                )
             }
         }
-        Text(
-            text = "Selected Category: $selectedCategory",
-            style = MaterialTheme.typography.body1,
-            modifier = Modifier.padding(top = 8.dp)
-        )
+
         Spacer(modifier = Modifier.height(16.dp))
-        OutlinedTextField(
-            value = questionText,
-            onValueChange = { questionText = it },
-            label = { Text("Question") },
-            modifier = Modifier.fillMaxWidth()
-        )
-        Spacer(modifier = Modifier.height(16.dp))
+
         Button(
             onClick = {
-                viewModel.postQuestion(selectedCategory, questionText, userId)
+                viewModel.postQuestion(selectedCategories, questionTitle, questionDesc, userId)
                 navigateBack()
             },
-            modifier = Modifier.align(Alignment.End)
+            modifier = Modifier
+                .align(Alignment.End)
+                .padding(end = 20.dp)
         ) {
             Text("Post")
         }
+
+        Spacer(modifier = Modifier.height(16.dp))
     }
 }
-
 
 @Composable
 fun QuestionDetailsScreen(
@@ -536,7 +553,7 @@ fun QuestionDetailsScreen(
     val userId = currentUser?.uid ?: ""
 
     Column {
-        Text(question.text)
+        Text(question.title)
         if (replies.isNotEmpty()) {
             ReplyList(replies)
         } else {
@@ -587,11 +604,146 @@ fun ReplyItem(reply: Reply) {
 }
 
 
-
+@OptIn(ExperimentalTextApi::class)
 @Composable
-fun ChatScreen(navController: NavController) {
-    LaunchedEffect(Unit) {
-        navController.navigate(Graph.FORUM)
+fun ChatScreen(viewModel: ForumViewModel, navController: NavController) {
+    val questions by viewModel.questions.observeAsState(emptyList())
+
+    Column(
+        modifier = Modifier.fillMaxWidth()
+    ) {
+        LazyColumn(
+            modifier = Modifier
+                .fillMaxSize()
+                .background(Color.White)
+        ) {
+            item {
+                Row(
+                    modifier = Modifier
+                        .height(100.dp)
+                        .fillMaxWidth()
+                        .padding(horizontal = 16.dp)
+                        .background(Color.White),
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+                    OutlinedTextField(
+                        modifier = Modifier
+                            .weight(1f)
+                            .padding(end = 8.dp)
+                            .border(
+                                BorderStroke(1.dp, Color.LightGray),
+                                shape = RoundedCornerShape(40.dp)
+                            ),
+                        value = "",
+                        onValueChange = { },
+                        placeholder = { Text("Search") },
+                        colors = TextFieldDefaults.textFieldColors(
+                            backgroundColor = MaterialTheme.colors.surface,
+                            focusedIndicatorColor = Color.Transparent,
+                            unfocusedIndicatorColor = Color.Transparent,
+                            disabledIndicatorColor = Color.Transparent
+                        ),
+                        textStyle = MaterialTheme.typography.body1
+                    )
+
+                    IconButton(
+                        onClick = { },
+                        modifier = Modifier
+                            .size(48.dp)
+                            .border(
+                                BorderStroke(1.dp, Color.LightGray),
+                                shape = RoundedCornerShape(40.dp)
+                            )
+                    ) {
+                        Icon(
+                            imageVector = Icons.Default.Notifications,
+                            contentDescription = "Notifications",
+                            tint = MaterialTheme.colors.onSurface
+                        )
+                    }
+                }
+            }
+
+            item {
+                Spacer(modifier = Modifier.height(30.dp))
+            }
+
+            item {
+                Text(
+                    text = "Discussion Forum",
+                    modifier = Modifier.fillMaxWidth(),
+                    textAlign = TextAlign.Center,
+                    fontSize = 32.sp,
+                    fontWeight = FontWeight.Black,
+                    style = TextStyle(
+                        brush = Brush.linearGradient(
+                            colors = listOf(
+                                Color.Red,
+                                Color(0xFFFFA500),
+                                Color(0xFFFF9800)
+                            ),
+                            tileMode = TileMode.Mirror
+                        ),
+                        fontSize = 30.sp
+                    )
+                )
+            }
+
+            item {
+                Text(
+                    text = "Engage, learn, and inspire through discussions",
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(top = 15.dp),
+                    textAlign = TextAlign.Center,
+                    fontSize = 14.sp,
+                    color = Color.Gray
+                )
+            }
+
+            item {
+                Spacer(modifier = Modifier.height(30.dp))
+                Text(
+                    text = "Trending Questions",
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(top = 15.dp, start = 20.dp),
+                    fontSize = 18.sp,
+                    color = Color(0xFF838383),
+                    fontWeight = FontWeight.Bold
+                )
+            }
+
+            println(questions)
+
+//        if (questions.isNotEmpty()) {
+//            item {
+//                QuestionList(questions)
+//            }
+//        } else {
+//            item {
+//                Text("No questions found.")
+//            }
+//        }
+
+            item {
+                Spacer(modifier = Modifier.height(30.dp))
+                Image(painter = painterResource(id = R.drawable.not_found), contentDescription = "No Questions Found.",
+                modifier = Modifier
+                    .align(Alignment.CenterHorizontally)
+                    .size(260.dp))
+            }
+
+        item {
+            FloatingActionButton(
+                onClick = { navController.navigate("questionForm") },
+                content = { Icon(Icons.Filled.Add, "Add") },
+                modifier = Modifier
+                    .padding(16.dp)
+                    .align(Alignment.End)
+            )
+        }
+        }
     }
 }
 
