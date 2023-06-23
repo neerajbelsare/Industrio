@@ -1,5 +1,7 @@
 package com.example.industrio.screens.ForumScreen
 
+import android.content.Context
+import android.widget.Toast
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
@@ -22,10 +24,10 @@ class ForumViewModel : ViewModel() {
         fetchQuestions()
     }
 
-    private fun fetchQuestions() {
+    fun fetchQuestions() {
         questionsCollection
             .orderBy("timestamp", Query.Direction.DESCENDING)
-            .limit(10)
+            .limit(5)
             .get()
             .addOnSuccessListener { documents ->
                 val questionList = mutableListOf<Question>()
@@ -54,10 +56,10 @@ class ForumViewModel : ViewModel() {
             .document(question.id)
             .set(question)
             .addOnSuccessListener {
-                // Question posted successfully
+
             }
             .addOnFailureListener { exception ->
-                // Handle the error
+
             }
     }
 

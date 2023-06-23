@@ -28,9 +28,13 @@ import com.example.industrio.screens.AccountNavScreens.ProfileScreen.TechnicianF
 import com.example.industrio.screens.AccountNavScreens.SettingsScreen
 import com.example.industrio.screens.ForumScreen.ForumViewModel
 import com.example.industrio.screens.HomeScreen.ChatScreen
+import com.example.industrio.screens.HomeScreen.ExploreScreen
 import com.example.industrio.screens.HomeScreen.MainScreen
 import com.example.industrio.screens.HomeScreen.QuestionDetailsScreen
 import com.example.industrio.screens.HomeScreen.QuestionFormScreen
+import com.example.industrio.screens.HomeScreen.TechnicianDetailsScreen
+import com.example.industrio.screens.HomeScreen.TechnicianListScreen
+import com.example.industrio.screens.TechniciansScreen.TechnicianListModel
 
 fun NavGraphBuilder.profileNavGraph(navController: NavHostController) {
     navigation(
@@ -130,7 +134,34 @@ fun NavGraphBuilder.forumNavGraph(navController: NavHostController, viewModel: F
             val questionId = backStackEntry.arguments?.getString("questionId")
             val question = viewModel.questions.value?.find { it.id == questionId }
             if (question != null) {
-                QuestionDetailsScreen(viewModel, question)
+                QuestionDetailsScreen(viewModel, question, navController)
+            } else {
+                // Handle question not found case
+            }
+        }
+    }
+}
+
+fun NavGraphBuilder.technicianNavGraph(navController: NavHostController, viewModel: TechnicianListModel) {
+
+    navigation(
+        route = Graph.TECHNICIANS,
+        startDestination = "major"
+    ) {
+        composable("major") {
+            ExploreScreen(viewModel, navController)
+        }
+        composable("technicianList") {
+            TechnicianListScreen(viewModel, navController)
+        }
+        composable(
+            "technicianDetails/{technicianName}",
+            arguments = listOf(navArgument("technicianName") { type = NavType.StringType })
+        ) { backStackEntry ->
+            val techncianName = backStackEntry.arguments?.getString("technicianName")
+            val technician = viewModel.technicians.value?.find { it.name == techncianName }
+            if (technician != null) {
+                TechnicianDetailsScreen(viewModel, technician, navController)
             } else {
                 // Handle question not found case
             }

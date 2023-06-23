@@ -23,10 +23,12 @@ import com.example.industrio.BottomBarScreen
 import com.example.industrio.navigation.nav_graph.Graph
 import com.example.industrio.navigation.nav_graph.forumNavGraph
 import com.example.industrio.navigation.nav_graph.profileNavGraph
+import com.example.industrio.navigation.nav_graph.technicianNavGraph
 import com.example.industrio.screens.ForumScreen.ForumViewModel
+import com.example.industrio.screens.TechniciansScreen.TechnicianListModel
 
 @Composable
-fun HomeScreen(viewModel: ForumViewModel) {
+fun HomeScreen(viewModel: ForumViewModel, viewModel1: TechnicianListModel) {
     val navController = rememberNavController()
 
     Scaffold(
@@ -45,7 +47,7 @@ fun HomeScreen(viewModel: ForumViewModel) {
                 ProfileScreen(navController = navController)
             }
             composable(route = BottomBarScreen.Explore.route) {
-                ExploreScreen(navController = navController)
+                ExploreScreen(viewModel1, navController = navController)
             }
             composable(route = BottomBarScreen.Chat.route) {
                 ChatScreen(viewModel, navController = navController)
@@ -53,6 +55,7 @@ fun HomeScreen(viewModel: ForumViewModel) {
 
             profileNavGraph(navController = navController)
             forumNavGraph(navController = navController, viewModel)
+            technicianNavGraph(navController = navController, viewModel1)
         }
     }
 }

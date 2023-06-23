@@ -7,6 +7,7 @@ import androidx.navigation.compose.composable
 import com.example.industrio.screens.ForumScreen.ForumViewModel
 import com.example.industrio.screens.HomeScreen.HomeScreen
 import com.example.industrio.screens.HomeScreen.ProfileViewModel
+import com.example.industrio.screens.TechniciansScreen.TechnicianListModel
 import com.google.firebase.auth.FirebaseAuth
 
 @Composable
@@ -17,7 +18,7 @@ fun isUserSignedIn(): Boolean {
 
 @Composable
 fun SetupNavGraph(
-    navController: NavHostController, viewModel: ForumViewModel
+    navController: NavHostController, viewModel: ForumViewModel, viewModel1: TechnicianListModel
 ) {
     val isSignedIn = isUserSignedIn()
     val startDest: String = if (isSignedIn) {
@@ -32,7 +33,7 @@ fun SetupNavGraph(
     ) {
         authNavGraph(navController = navController)
         composable(route = Graph.HOME) {
-            HomeScreen(viewModel)
+            HomeScreen(viewModel, viewModel1)
         }
     }
 }
@@ -46,4 +47,5 @@ object Graph {
     const val TECHNICIAN = "technician_graph"
     const val COMPANY = "company_graph"
     const val FORUM = "forum_graph"
+    const val TECHNICIANS = "technicians0_graph"
 }

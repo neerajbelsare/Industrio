@@ -167,12 +167,13 @@ fun SignInScreen(navController: NavController, signInViewModel: SignInViewModel 
                 onClick = {},
                 modifier = Modifier
                     .fillMaxWidth()
+                    .height(50.dp)
                     .clip(RoundedCornerShape(8.dp)),
                 enabled = allInputsFilled
             ) {
                 CircularProgressIndicator(
                     modifier = Modifier
-                        .size(50.dp),
+                        .size(30.dp),
                     color = Color.White,
                     strokeWidth = 3.dp
                 )

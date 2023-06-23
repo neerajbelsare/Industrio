@@ -4,14 +4,17 @@ import android.content.pm.ActivityInfo
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
+import androidx.activity.viewModels
 import androidx.compose.foundation.layout.*
 import androidx.compose.material.*
 import androidx.compose.ui.Modifier
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.compose.rememberNavController
+import com.example.industrio.AlgoliaSearch.QuestionSearchModel
 import com.example.industrio.ui.theme.IndustrioTheme
 import com.example.industrio.navigation.nav_graph.SetupNavGraph
 import com.example.industrio.screens.ForumScreen.ForumViewModel
+import com.example.industrio.screens.TechniciansScreen.TechnicianListModel
 import com.google.firebase.FirebaseApp
 
 class MainActivity : ComponentActivity() {
@@ -25,8 +28,10 @@ class MainActivity : ComponentActivity() {
                     modifier = Modifier.fillMaxSize(),
                     color = MaterialTheme.colors.background
                 ) {
+                    val searchViewModel: QuestionSearchModel by viewModels()
                     val viewModel: ForumViewModel = viewModel()
-                    SetupNavGraph(navController = rememberNavController(), viewModel)
+                    val viewModel1: TechnicianListModel = viewModel()
+                    SetupNavGraph(navController = rememberNavController(), viewModel, viewModel1)
                 }
             }
         }

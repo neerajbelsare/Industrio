@@ -1,30 +1,12 @@
 package com.example.industrio.screens.HomeScreen
 
-import android.content.ClipData
-import androidx.compose.foundation.background
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.wrapContentSize
-import androidx.compose.material.Text
-import androidx.compose.runtime.Composable
-import androidx.compose.ui.Alignment
-import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.text.style.TextAlign
-import androidx.compose.ui.unit.sp
 import android.content.Context
 import android.content.Intent
-import android.net.Uri
 import android.os.Bundle
-import android.text.SpannableStringBuilder
-import android.text.style.ForegroundColorSpan
-import androidx.activity.OnBackPressedCallback
-import androidx.activity.compose.setContent
-import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.horizontalScroll
@@ -36,47 +18,59 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.foundation.text.InlineTextContent
-import androidx.compose.foundation.text.appendInlineContent
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
-import androidx.compose.material.icons.filled.Done
-import androidx.compose.material.icons.filled.Notifications
+import androidx.compose.material.icons.filled.Send
 import androidx.compose.material.icons.outlined.*
 import androidx.compose.runtime.*
+import androidx.compose.runtime.livedata.observeAsState
+import androidx.compose.ui.Alignment
+import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.draw.scale
+import androidx.compose.ui.draw.shadow
+import androidx.compose.ui.geometry.Offset
+import androidx.compose.ui.graphics.Brush
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.Color.Companion.Gray
+import androidx.compose.ui.graphics.TileMode
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.ComposeView
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.text.ExperimentalTextApi
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.Font
 import androidx.compose.ui.text.font.FontFamily
+import androidx.compose.ui.text.font.FontStyle
+import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import androidx.compose.ui.viewinterop.AndroidView
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
-import androidx.navigation.compose.NavHost
-import androidx.navigation.compose.composable
-import androidx.navigation.compose.rememberNavController
 import coil.compose.AsyncImage
-import coil.compose.rememberAsyncImagePainter
-import coil.compose.rememberImagePainter
 import coil.request.ImageRequest
 import com.bumptech.glide.integration.compose.ExperimentalGlideComposeApi
 import com.bumptech.glide.integration.compose.GlideImage
 import com.example.industrio.R
 import com.example.industrio.navigation.AuthScreen
-import com.example.industrio.ui.theme.MainColor
+import com.example.industrio.navigation.FormScreen
 import com.example.industrio.navigation.Profile
 import com.example.industrio.navigation.nav_graph.Graph
+import com.example.industrio.screens.AccountNavScreens.ProfileScreen.CustomTopAppBarWithBackButton
+import com.example.industrio.screens.AccountNavScreens.ProfileScreen.TechnicianForm.Technician
+import com.example.industrio.screens.AccountNavScreens.ProfileScreen.TechnicianForm.TechnicianInfo
 import com.example.industrio.screens.ForumScreen.ForumViewModel
 import com.example.industrio.screens.ForumScreen.Question
 import com.example.industrio.screens.ForumScreen.Reply
+import com.example.industrio.screens.TechniciansScreen.TechnicianListModel
+import com.example.industrio.ui.theme.MainColor
 import com.google.accompanist.pager.ExperimentalPagerApi
 import com.google.accompanist.pager.HorizontalPager
 import com.google.accompanist.pager.PagerState
@@ -84,22 +78,10 @@ import com.google.android.gms.maps.GoogleMapOptions
 import com.google.android.gms.maps.MapView
 import com.google.firebase.auth.FirebaseAuth
 import com.valentinilk.shimmer.shimmer
-import io.getstream.chat.android.client.uploader.FileUploader
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.withContext
-import androidx.compose.runtime.livedata.observeAsState
-import androidx.compose.ui.geometry.Offset
-import androidx.compose.ui.graphics.Brush
-import androidx.compose.ui.graphics.Shader
-import androidx.compose.ui.graphics.TileMode
-import androidx.compose.ui.graphics.TransformOrigin
-import androidx.compose.ui.graphics.graphicsLayer
-import androidx.compose.ui.graphics.toArgb
-import androidx.compose.ui.text.AnnotatedString
-import androidx.compose.ui.text.ExperimentalTextApi
-import androidx.compose.ui.text.buildAnnotatedString
-
+import org.checkerframework.checker.units.qual.s
 
 
 @Composable
@@ -234,7 +216,7 @@ fun HomeScreen(navController: NavController, profileViewModel: ProfileViewModel 
                     )
             ) {
                 Icon(
-                    imageVector = Icons.Default.Notifications,
+                    painter = painterResource(R.drawable.ic_filter),
                     contentDescription = "Notifications",
                     tint = MaterialTheme.colors.onSurface
                 )
@@ -392,6 +374,7 @@ fun Item(item: ItemData) {
             fontWeight = FontWeight.Medium,
             color = Color(0xFF9C9C9C)
         )
+
     }
 }
 
@@ -404,36 +387,185 @@ fun MainScreen(viewModel: ForumViewModel, navController: NavController) {
 
 }
 
-
 @Composable
-fun QuestionList(questions: List<Question>) {
-    LazyColumn {
-        items(questions) { question ->
-            QuestionItem(question)
-        }
-    }
-}
-@Composable
-fun QuestionItem(question: Question) {
+fun QuestionItem(question: Question, onItemClick: (Question) -> Unit) {
     val selectedQuestionId = remember { mutableStateOf("") }
     Card(
         modifier = Modifier
             .fillMaxWidth()
             .padding(8.dp)
-            .clickable { selectedQuestionId.value = question.id }
+            .shadow(elevation = 5.dp)
+            .clickable {
+                selectedQuestionId.value = question.id
+                onItemClick(question)
+            }
     ) {
         Column(
             modifier = Modifier.padding(16.dp)
         ) {
             Text(
                 text = question.title,
-                style = MaterialTheme.typography.body1
+                style = MaterialTheme.typography.h6
             )
+
+            Spacer(modifier = Modifier.height(10.dp))
+
             Text(
-                text = "Category: ${question.category}",
-                style = MaterialTheme.typography.caption,
-                color = Color.Gray
+                text = question.description,
+                style = MaterialTheme.typography.body2,
+                color = Color(0xFF9E9E9E),
+                maxLines = 2,
+                overflow = TextOverflow.Ellipsis
             )
+
+            Spacer(modifier = Modifier.height(10.dp))
+
+            for(category in question.category) {
+                if (category == "Plumbing") {
+                    Text(
+                        text = "    Plumbing    ",
+                        style = MaterialTheme.typography.caption,
+                        color = Color.White,
+                        modifier = Modifier
+                            .clip(RoundedCornerShape(30.dp))
+                            .background(color = Color(0xFFFC982D))
+                    )
+
+                    Spacer(modifier = Modifier.height(10.dp))
+                }
+
+                if (category == "Equipment Installation") {
+                    Text(
+                        text = "   Equipment Installation   ",
+                        style = MaterialTheme.typography.caption,
+                        color = Color.White,
+                        modifier = Modifier
+                            .clip(RoundedCornerShape(30.dp))
+                            .background(color = Color(0xFF3BA5FF))
+                    )
+                }
+
+                if (category == "Maintenance and Repairs") {
+                    Text(
+                        text = "    Maintenance and Repairs     ",
+                        style = MaterialTheme.typography.caption,
+                        color = Color.White,
+                        modifier = Modifier
+                            .clip(RoundedCornerShape(30.dp))
+                            .background(color = Color(0xFF0A6900))
+                    )
+                }
+
+                if (category == "Preventive Maintenance") {
+                    Text(
+                        text = "   Preventive Maintenance   ",
+                        style = MaterialTheme.typography.caption,
+                        color = Color.White,
+                        modifier = Modifier
+                            .clip(RoundedCornerShape(30.dp))
+                            .background(color = Color(0xFFFFF52F))
+                    )
+                }
+
+                if (category == "Machinery Alignment") {
+                    Text(
+                        text = "   Machinery Alignment   ",
+                        style = MaterialTheme.typography.caption,
+                        color = Color.White,
+                        modifier = Modifier
+                            .clip(RoundedCornerShape(30.dp))
+                            .background(color = Color(0xFFFF882B))
+                    )
+                }
+
+                if (category == "Piping Systems") {
+                    Text(
+                        text = "   Piping Systems    ",
+                        style = MaterialTheme.typography.caption,
+                        color = Color.White,
+                        modifier = Modifier
+                            .clip(RoundedCornerShape(30.dp))
+                            .background(color = Color(0xFFFF4343))
+                    )
+                }
+
+                if (category == "HVAC Systems") {
+                    Text(
+                        text = "    HVAC Systems    ",
+                        style = MaterialTheme.typography.caption,
+                        color = Color.White,
+                        modifier = Modifier
+                            .clip(RoundedCornerShape(30.dp))
+                            .background(color = Color(0xFF3C8BFF))
+                    )
+                }
+
+                if (category == "Conveyor Systems") {
+                    Text(
+                        text = "    Conveyor Systems    ",
+                        style = MaterialTheme.typography.caption,
+                        color = Color.White,
+                        modifier = Modifier
+                            .clip(RoundedCornerShape(30.dp))
+                            .background(color = Color(0xFFF734FF))
+                    )
+                }
+
+                if (category == "Welding and Fabrication") {
+                    Text(
+                        text = "    Welding and Fabrication    ",
+                        style = MaterialTheme.typography.caption,
+                        color = Color.White,
+                        modifier = Modifier
+                            .clip(RoundedCornerShape(30.dp))
+                            .background(color = Color(0xFF4D74FF))
+                    )
+                }
+
+                if (category == "Instrumentation and Control Systems") {
+                    Text(
+                        text = "    Instrumentation and Control Systems    ",
+                        style = MaterialTheme.typography.caption,
+                        color = Color.White,
+                        modifier = Modifier
+                            .clip(RoundedCornerShape(30.dp))
+                            .background(color = Color(0xFF008A63))
+                    )
+                }
+
+                if (category == "Waste Management Systems") {
+                    Text(
+                        text = "    Waste Management Systems    ",
+                        style = MaterialTheme.typography.caption,
+                        color = Color.White,
+                        modifier = Modifier
+                            .clip(RoundedCornerShape(30.dp))
+                            .background(color = Color(0xFFFFA22F))
+                    )
+                }
+
+                if (category == "Energy Management") {
+                    Text(
+                        text = "    Energy Management    ",
+                        style = MaterialTheme.typography.caption,
+                        color = Color.White,
+                        modifier = Modifier
+                            .background(color = Color(0xFFFF3030))
+                            .padding(end = 10.dp)
+                    )
+                }
+
+                if (category == "Safety Systems") {
+                    Text(
+                        text = "    Safety Systems    ",
+                        style = MaterialTheme.typography.caption,
+                        color = Color.White,
+                        modifier = Modifier
+                            .clip(RoundedCornerShape(30.dp))
+                            .background(color = Color(0xFF305DFF))
+                    )
+                }
+            }
         }
     }
 }
@@ -543,8 +675,10 @@ fun QuestionFormScreen(viewModel: ForumViewModel, navigateBack: () -> Unit) {
 @Composable
 fun QuestionDetailsScreen(
     viewModel: ForumViewModel,
-    question: Question
+    question: Question,
+    navController: NavController
 ) {
+    viewModel.fetchReplies(question.id)
     val replies by viewModel.replies.observeAsState(emptyList())
     val replyText = remember { mutableStateOf("") }
 
@@ -552,44 +686,267 @@ fun QuestionDetailsScreen(
     val currentUser = firebaseAuth.currentUser
     val userId = currentUser?.uid ?: ""
 
-    Column {
-        Text(question.title)
-        if (replies.isNotEmpty()) {
-            ReplyList(replies)
-        } else {
-            Text("No replies found.")
-        }
-        Spacer(modifier = Modifier.height(16.dp))
-        Row(
-            modifier = Modifier.fillMaxWidth(),
-            verticalAlignment = Alignment.CenterVertically
-        ) {
-            OutlinedTextField(
-                value = replyText.value,
-                onValueChange = { replyText.value = it },
-                label = { Text("Write a reply") },
-                modifier = Modifier.weight(1f)
+    Scaffold(
+        topBar = {
+            CustomTopAppBarWithBackButton(
+                navController = navController,
+                appBarTitle = "Question Thread",
+                backgroundColor = Color.White
             )
-            Spacer(modifier = Modifier.width(8.dp))
-            Button(
-                onClick = {
-                    viewModel.postReply(question.id, replyText.value, userId)
-                    replyText.value = ""
-                },
-                enabled = replyText.value.isNotBlank()
+        },
+        backgroundColor = Color.White
+    ) {
+        it
+        Column(
+            modifier = Modifier.padding(16.dp)
+        ) {
+            Card(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(8.dp)
+                    .shadow(elevation = 3.dp)
             ) {
-                Text("Submit")
+                Column(
+                    modifier = Modifier.padding(16.dp)
+                ) {
+                    Text(
+                        text = question.title,
+                        style = MaterialTheme.typography.h6
+                    )
+
+                    Spacer(modifier = Modifier.height(10.dp))
+
+                    Text(
+                        text = question.description,
+                        style = MaterialTheme.typography.body2,
+                        color = Color(0xFF9E9E9E),
+                    )
+
+                    Spacer(modifier = Modifier.height(10.dp))
+
+                    for(category in question.category) {
+                        if (category == "Plumbing") {
+                            Text(
+                                text = "    Plumbing    ",
+                                style = MaterialTheme.typography.caption,
+                                color = Color.White,
+                                modifier = Modifier
+                                    .clip(RoundedCornerShape(30.dp))
+                                    .background(color = Color(0xFFFC982D))
+                            )
+
+                            Spacer(modifier = Modifier.height(10.dp))
+                        }
+
+                        if (category == "Equipment Installation") {
+                            Text(
+                                text = "   Equipment Installation   ",
+                                style = MaterialTheme.typography.caption,
+                                color = Color.White,
+                                modifier = Modifier
+                                    .clip(RoundedCornerShape(30.dp))
+                                    .background(color = Color(0xFF3BA5FF))
+                            )
+                        }
+
+                        if (category == "Maintenance and Repairs") {
+                            Text(
+                                text = "    Maintenance and Repairs     ",
+                                style = MaterialTheme.typography.caption,
+                                color = Color.White,
+                                modifier = Modifier
+                                    .clip(RoundedCornerShape(30.dp))
+                                    .background(color = Color(0xFF0A6900))
+                            )
+                        }
+
+                        if (category == "Preventive Maintenance") {
+                            Text(
+                                text = "   Preventive Maintenance   ",
+                                style = MaterialTheme.typography.caption,
+                                color = Color.White,
+                                modifier = Modifier
+                                    .clip(RoundedCornerShape(30.dp))
+                                    .background(color = Color(0xFFFFF52F))
+                            )
+                        }
+
+                        if (category == "Machinery Alignment") {
+                            Text(
+                                text = "   Machinery Alignment   ",
+                                style = MaterialTheme.typography.caption,
+                                color = Color.White,
+                                modifier = Modifier
+                                    .clip(RoundedCornerShape(30.dp))
+                                    .background(color = Color(0xFFFF882B))
+                            )
+                        }
+
+                        if (category == "Piping Systems") {
+                            Text(
+                                text = "   Piping Systems    ",
+                                style = MaterialTheme.typography.caption,
+                                color = Color.White,
+                                modifier = Modifier
+                                    .clip(RoundedCornerShape(30.dp))
+                                    .background(color = Color(0xFFFF4343))
+                            )
+                        }
+
+                        if (category == "HVAC Systems") {
+                            Text(
+                                text = "    HVAC Systems    ",
+                                style = MaterialTheme.typography.caption,
+                                color = Color.White,
+                                modifier = Modifier
+                                    .clip(RoundedCornerShape(30.dp))
+                                    .background(color = Color(0xFF3C8BFF))
+                            )
+                        }
+
+                        if (category == "Conveyor Systems") {
+                            Text(
+                                text = "    Conveyor Systems    ",
+                                style = MaterialTheme.typography.caption,
+                                color = Color.White,
+                                modifier = Modifier
+                                    .clip(RoundedCornerShape(30.dp))
+                                    .background(color = Color(0xFFF734FF))
+                            )
+                        }
+
+                        if (category == "Welding and Fabrication") {
+                            Text(
+                                text = "    Welding and Fabrication    ",
+                                style = MaterialTheme.typography.caption,
+                                color = Color.White,
+                                modifier = Modifier
+                                    .clip(RoundedCornerShape(30.dp))
+                                    .background(color = Color(0xFF4D74FF))
+                            )
+                        }
+
+                        if (category == "Instrumentation and Control Systems") {
+                            Text(
+                                text = "    Instrumentation and Control Systems    ",
+                                style = MaterialTheme.typography.caption,
+                                color = Color.White,
+                                modifier = Modifier
+                                    .clip(RoundedCornerShape(30.dp))
+                                    .background(color = Color(0xFF008A63))
+                            )
+                        }
+
+                        if (category == "Waste Management Systems") {
+                            Text(
+                                text = "    Waste Management Systems    ",
+                                style = MaterialTheme.typography.caption,
+                                color = Color.White,
+                                modifier = Modifier
+                                    .clip(RoundedCornerShape(30.dp))
+                                    .background(color = Color(0xFFFFA22F))
+                            )
+                        }
+
+                        if (category == "Energy Management") {
+                            Text(
+                                text = "    Energy Management    ",
+                                style = MaterialTheme.typography.caption,
+                                color = Color.White,
+                                modifier = Modifier
+                                    .background(color = Color(0xFFFF3030))
+                                    .padding(end = 10.dp)
+                            )
+                        }
+
+                        if (category == "Safety Systems") {
+                            Text(
+                                text = "    Safety Systems    ",
+                                style = MaterialTheme.typography.caption,
+                                color = Color.White,
+                                modifier = Modifier
+                                    .clip(RoundedCornerShape(30.dp))
+                                    .background(color = Color(0xFF305DFF))
+                            )
+                        }
+                    }
+                }
             }
+
+            Spacer(modifier = Modifier.height(8.dp))
+
+            Text(
+                text = "${replies.size} Replies",
+                style = MaterialTheme.typography.h5,
+                fontWeight = FontWeight.Bold,
+            modifier = Modifier.padding(5.dp)
+            )
+
+            Spacer(modifier = Modifier.height(8.dp))
+
+                if (replies.isNotEmpty()) {
+                    LazyColumn(
+                        modifier = Modifier
+                            .fillMaxSize()
+                            .background(Color.White)
+                    ) {
+                            items(replies) { reply ->
+                                Card(
+                                    modifier = Modifier
+                                        .fillMaxWidth()
+                                        .padding(8.dp)
+                                        .shadow(elevation = 3.dp)
+                                ) {
+                                    ReplyItem(reply)
+                                }
+                                Spacer(modifier = Modifier.height(8.dp))
+                            }
+                        item {
+                            Spacer(modifier = Modifier.height(80.dp))
+                        }
+                    }
+                } else {
+                    Image(painter = painterResource(id = R.drawable.no_replies), contentDescription = "No Questions Found.",
+                        modifier = Modifier
+                            .align(Alignment.CenterHorizontally)
+                            .size(260.dp))
+                }
         }
-    }
-}
 
-
-@Composable
-fun ReplyList(replies: List<Reply>) {
-    LazyColumn {
-        items(replies) { reply ->
-            ReplyItem(reply)
+        Box(
+            modifier = Modifier
+                .fillMaxSize()
+                .padding(16.dp)
+                .wrapContentSize(Alignment.BottomCenter)
+                .background(Color.White)
+        ) {
+            Row(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(8.dp),
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                OutlinedTextField(
+                    modifier = Modifier.width(280.dp),
+                    value = replyText.value,
+                    onValueChange = { replyText.value = it },
+                    colors = TextFieldDefaults.outlinedTextFieldColors(
+                        focusedBorderColor = MainColor,
+                        unfocusedBorderColor = Color(0xFFDADADA),
+                    ),
+                    label = { Text("Write a reply") },
+                )
+                Spacer(modifier = Modifier.width(8.dp))
+                IconButton(
+                    onClick = {
+                        viewModel.postReply(question.id, replyText.value, userId)
+                        replyText.value = ""
+                    },
+                    enabled = replyText.value.isNotBlank()
+                ) {
+                    Icon(painterResource(id = R.drawable.ic_send), contentDescription = "Send")
+                }
+            }
         }
     }
 }
@@ -600,176 +957,512 @@ fun ReplyItem(reply: Reply) {
         Text(reply.text)
         Spacer(modifier = Modifier.height(8.dp))
         Text("User ID: ${reply.userId}")
+        Spacer(modifier = Modifier.height(8.dp))
     }
 }
 
-
-@OptIn(ExperimentalTextApi::class)
 @Composable
 fun ChatScreen(viewModel: ForumViewModel, navController: NavController) {
+    viewModel.fetchQuestions()
     val questions by viewModel.questions.observeAsState(emptyList())
 
-    Column(
-        modifier = Modifier.fillMaxWidth()
-    ) {
-        LazyColumn(
+    Column(modifier = Modifier
+        .fillMaxWidth()
+        .background(Color.White)) {
+        Row(
             modifier = Modifier
-                .fillMaxSize()
-                .background(Color.White)
+                .height(100.dp)
+                .fillMaxWidth()
+                .padding(horizontal = 16.dp)
+                .background(Color.White),
+            verticalAlignment = Alignment.CenterVertically
         ) {
-            item {
-                Row(
-                    modifier = Modifier
-                        .height(100.dp)
-                        .fillMaxWidth()
-                        .padding(horizontal = 16.dp)
-                        .background(Color.White),
-                    verticalAlignment = Alignment.CenterVertically
-                ) {
-                    OutlinedTextField(
-                        modifier = Modifier
-                            .weight(1f)
-                            .padding(end = 8.dp)
-                            .border(
-                                BorderStroke(1.dp, Color.LightGray),
-                                shape = RoundedCornerShape(40.dp)
-                            ),
-                        value = "",
-                        onValueChange = { },
-                        placeholder = { Text("Search") },
-                        colors = TextFieldDefaults.textFieldColors(
-                            backgroundColor = MaterialTheme.colors.surface,
-                            focusedIndicatorColor = Color.Transparent,
-                            unfocusedIndicatorColor = Color.Transparent,
-                            disabledIndicatorColor = Color.Transparent
-                        ),
-                        textStyle = MaterialTheme.typography.body1
-                    )
+            OutlinedTextField(
+                modifier = Modifier
+                    .weight(1f)
+                    .padding(end = 8.dp)
+                    .border(
+                        BorderStroke(1.dp, Color.LightGray),
+                        shape = RoundedCornerShape(40.dp)
+                    ),
+                value = "",
+                onValueChange = { },
+                placeholder = { Text("Search") },
+                colors = TextFieldDefaults.textFieldColors(
+                    backgroundColor = MaterialTheme.colors.surface,
+                    focusedIndicatorColor = Color.Transparent,
+                    unfocusedIndicatorColor = Color.Transparent,
+                    disabledIndicatorColor = Color.Transparent
+                ),
+                textStyle = MaterialTheme.typography.body1
+            )
 
-                    IconButton(
-                        onClick = { },
-                        modifier = Modifier
-                            .size(48.dp)
-                            .border(
-                                BorderStroke(1.dp, Color.LightGray),
-                                shape = RoundedCornerShape(40.dp)
-                            )
-                    ) {
-                        Icon(
-                            imageVector = Icons.Default.Notifications,
-                            contentDescription = "Notifications",
-                            tint = MaterialTheme.colors.onSurface
-                        )
+            IconButton(
+                onClick = { },
+                modifier = Modifier
+                    .size(48.dp)
+                    .border(
+                        BorderStroke(1.dp, Color.LightGray),
+                        shape = RoundedCornerShape(40.dp)
+                    )
+            ) {
+                Icon(
+                    painter = painterResource(id = R.drawable.ic_filter),
+                    contentDescription = "Notifications",
+                    tint = MaterialTheme.colors.onSurface
+                )
+            }
+        }
+
+        Spacer(modifier = Modifier.height(30.dp))
+
+        Text(
+            text = "Discussion Forum",
+            modifier = Modifier.fillMaxWidth(),
+            textAlign = TextAlign.Center,
+            fontSize = 32.sp,
+            fontWeight = FontWeight.Black,
+            style = TextStyle(
+                brush = Brush.linearGradient(
+                    colors = listOf(
+                        Color.Red,
+                        Color(0xFFFFA500),
+                        Color(0xFFFF9800)
+                    ),
+                    tileMode = TileMode.Mirror
+                ),
+                fontSize = 30.sp
+            )
+        )
+
+        Text(
+            text = "Engage, learn, and inspire through discussions",
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(top = 15.dp),
+            textAlign = TextAlign.Center,
+            fontSize = 14.sp,
+            color = Color.Gray
+        )
+
+        Spacer(modifier = Modifier.height(50.dp))
+
+        FloatingActionButton(
+            onClick = { navController.navigate("questionForm") },
+            content = { Icon(Icons.Filled.Add, "Add") },
+            modifier = Modifier
+                .padding(16.dp)
+                .align(Alignment.End)
+        )
+
+        Text(
+            text = "Recent Questions",
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(start = 20.dp),
+            fontSize = 18.sp,
+            color = Color(0xFF838383),
+            fontWeight = FontWeight.Bold
+        )
+
+        Spacer(modifier = Modifier.height(15.dp))
+
+        if (questions.isNotEmpty()) {
+            LazyColumn(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .background(Color.White)
+            ) {
+                items(questions) { question ->
+                    QuestionItem(question) {
+                        navController.navigate("questionDetails/${question.id}")
                     }
                 }
+                item {
+                    Spacer(modifier = Modifier.height(60.dp))
+                }
             }
-
-            item {
-                Spacer(modifier = Modifier.height(30.dp))
-            }
-
-            item {
-                Text(
-                    text = "Discussion Forum",
-                    modifier = Modifier.fillMaxWidth(),
-                    textAlign = TextAlign.Center,
-                    fontSize = 32.sp,
-                    fontWeight = FontWeight.Black,
-                    style = TextStyle(
-                        brush = Brush.linearGradient(
-                            colors = listOf(
-                                Color.Red,
-                                Color(0xFFFFA500),
-                                Color(0xFFFF9800)
-                            ),
-                            tileMode = TileMode.Mirror
-                        ),
-                        fontSize = 30.sp
-                    )
-                )
-            }
-
-            item {
-                Text(
-                    text = "Engage, learn, and inspire through discussions",
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(top = 15.dp),
-                    textAlign = TextAlign.Center,
-                    fontSize = 14.sp,
-                    color = Color.Gray
-                )
-            }
-
-            item {
-                Spacer(modifier = Modifier.height(30.dp))
-                Text(
-                    text = "Trending Questions",
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(top = 15.dp, start = 20.dp),
-                    fontSize = 18.sp,
-                    color = Color(0xFF838383),
-                    fontWeight = FontWeight.Bold
-                )
-            }
-
-            println(questions)
-
-//        if (questions.isNotEmpty()) {
-//            item {
-//                QuestionList(questions)
-//            }
-//        } else {
-//            item {
-//                Text("No questions found.")
-//            }
-//        }
-
-            item {
-                Spacer(modifier = Modifier.height(30.dp))
-                Image(painter = painterResource(id = R.drawable.not_found), contentDescription = "No Questions Found.",
+        } else {
+            Image(painter = painterResource(id = R.drawable.not_found), contentDescription = "No Questions Found.",
                 modifier = Modifier
                     .align(Alignment.CenterHorizontally)
                     .size(260.dp))
-            }
-
-        item {
-            FloatingActionButton(
-                onClick = { navController.navigate("questionForm") },
-                content = { Icon(Icons.Filled.Add, "Add") },
-                modifier = Modifier
-                    .padding(16.dp)
-                    .align(Alignment.End)
-            )
         }
+
+    }
+}
+
+@OptIn(ExperimentalGlideComposeApi::class)
+@Composable
+fun TechnicianItem(technician: Technician, onItemClick: (Technician) -> Unit) {
+    val selectedTechnicianName = remember { mutableStateOf("") }
+    Card(
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(8.dp)
+            .shadow(elevation = 2.dp)
+            .clickable {
+                selectedTechnicianName.value = technician.name
+                onItemClick(technician)
+            }
+    ) {
+        Column(
+            modifier = Modifier.padding(16.dp)
+        ) {
+            GlideImage(
+                model = technician.profileUrl,
+                contentDescription = "Your Image",
+                contentScale = ContentScale.Crop,
+                modifier = Modifier
+                    .padding(start = 20.dp, bottom = 20.dp)
+                    .size(132.dp)
+                    .clip(CircleShape)
+                    .align(Alignment.CenterHorizontally)
+                    .scale(1f, 1f)
+            )
+
+
+
+            Spacer(modifier = Modifier.height(8.dp))
+
+            Text(text = technician.name)
+
+            Spacer(modifier = Modifier.height(8.dp))
+
+            Text(text = "    ${technician.speciality}    ",
+                color = Color(0xFF9B9B9B))
         }
     }
 }
 
 @Composable
-fun ExploreScreen(navController: NavController) {
-    Column(
-        modifier = Modifier
-            .fillMaxSize()
-            .wrapContentSize(Alignment.Center)
-    ) {
-        var location by remember { mutableStateOf("Your Location") }
-        val context = LocalContext.current
+fun TechnicianListScreen(viewModel: TechnicianListModel, navController: NavController) {
+    val technicians by viewModel.technicians.observeAsState(emptyList())
 
-        Column(
+    Column(modifier = Modifier
+        .fillMaxWidth()
+        .background(Color.White)) {
+        Row(
             modifier = Modifier
-                .fillMaxSize()
-                .padding(16.dp),
-            horizontalAlignment = Alignment.CenterHorizontally
+                .height(100.dp)
+                .fillMaxWidth()
+                .padding(horizontal = 16.dp)
+                .background(Color.White),
+            verticalAlignment = Alignment.CenterVertically
         ) {
-            Button(
-                onClick = {context.startActivity(Intent(context, MapActivity::class.java))},
+            OutlinedTextField(
+                modifier = Modifier
+                    .weight(1f)
+                    .padding(end = 8.dp)
+                    .border(
+                        BorderStroke(1.dp, Color.LightGray),
+                        shape = RoundedCornerShape(40.dp)
+                    ),
+                value = "",
+                onValueChange = { },
+                placeholder = { Text("Search") },
+                colors = TextFieldDefaults.textFieldColors(
+                    backgroundColor = MaterialTheme.colors.surface,
+                    focusedIndicatorColor = Color.Transparent,
+                    unfocusedIndicatorColor = Color.Transparent,
+                    disabledIndicatorColor = Color.Transparent
+                ),
+                textStyle = MaterialTheme.typography.body1
+            )
+
+            IconButton(
+                onClick = { },
+                modifier = Modifier
+                    .size(48.dp)
+                    .border(
+                        BorderStroke(1.dp, Color.LightGray),
+                        shape = RoundedCornerShape(40.dp)
+                    )
+            ) {
+                Icon(
+                    painter = painterResource(id = R.drawable.ic_filter),
+                    contentDescription = "Notifications",
+                    tint = MaterialTheme.colors.onSurface
+                )
+            }
+        }
+
+        if (technicians.isNotEmpty()) {
+            LazyColumn(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .background(Color.White)
+            ) {
+                items(technicians) { technician ->
+                    TechnicianItem(technician) {
+                        navController.navigate("technicianDetails/${technician.name}")
+                    }
+                }
+                item {
+                    Spacer(modifier = Modifier.height(60.dp))
+                }
+            }
+        } else {
+            Image(
+                painter = painterResource(id = R.drawable.not_found),
+                contentDescription = "No Questions Found.",
+                modifier = Modifier
+                    .align(Alignment.CenterHorizontally)
+                    .size(260.dp)
+            )
+        }
+    }
+}
+
+@Composable
+fun ExploreScreen(viewModel: TechnicianListModel, navController: NavController) {
+//    Column(
+//        modifier = Modifier
+//            .fillMaxSize()
+//            .wrapContentSize(Alignment.Center)
+//    ) {
+//        var location by remember { mutableStateOf("Your Location") }
+//        val context = LocalContext.current
+//
+//        Column(
+//            modifier = Modifier
+//                .fillMaxSize()
+//                .padding(16.dp),
+//            horizontalAlignment = Alignment.CenterHorizontally
+//        ) {
+//            Button(
+//                onClick = {context.startActivity(Intent(context, MapActivity::class.java))},
+//                modifier = Modifier
+//                    .fillMaxWidth()
+//            ) {
+//                Text(text = "Access Maps")
+//            }
+//        }
+//    }
+
+    val technicians by viewModel.technicians.observeAsState(emptyList())
+
+    Column(modifier = Modifier
+        .fillMaxWidth()
+        .background(Color.White)) {
+        Row(
+            modifier = Modifier
+                .height(100.dp)
+                .fillMaxWidth()
+                .padding(horizontal = 16.dp)
+                .background(Color.White),
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            OutlinedTextField(
+                modifier = Modifier
+                    .weight(1f)
+                    .padding(end = 8.dp)
+                    .border(
+                        BorderStroke(1.dp, Color.LightGray),
+                        shape = RoundedCornerShape(40.dp)
+                    ),
+                value = "",
+                onValueChange = { },
+                placeholder = { Text("Search") },
+                colors = TextFieldDefaults.textFieldColors(
+                    backgroundColor = MaterialTheme.colors.surface,
+                    focusedIndicatorColor = Color.Transparent,
+                    unfocusedIndicatorColor = Color.Transparent,
+                    disabledIndicatorColor = Color.Transparent
+                ),
+                textStyle = MaterialTheme.typography.body1
+            )
+
+            IconButton(
+                onClick = { },
+                modifier = Modifier
+                    .size(48.dp)
+                    .border(
+                        BorderStroke(1.dp, Color.LightGray),
+                        shape = RoundedCornerShape(40.dp)
+                    )
+            ) {
+                Icon(
+                    painter = painterResource(id = R.drawable.ic_filter),
+                    contentDescription = "Notifications",
+                    tint = MaterialTheme.colors.onSurface
+                )
+            }
+        }
+
+        Spacer(modifier = Modifier.height(30.dp))
+
+        Text(
+            text = "Technicians",
+            modifier = Modifier.fillMaxWidth(),
+            textAlign = TextAlign.Center,
+            fontSize = 32.sp,
+            fontWeight = FontWeight.Black,
+            style = TextStyle(
+                brush = Brush.linearGradient(
+                    colors = listOf(
+                        Color.Red,
+                        Color(0xFFFFA500),
+                        Color(0xFFFF9800)
+                    ),
+                    tileMode = TileMode.Mirror
+                ),
+                fontSize = 30.sp
+            )
+        )
+
+        Text(
+            text = "Your Gateway to Qualified and Experienced Technicians",
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(top = 15.dp),
+            textAlign = TextAlign.Center,
+            fontSize = 14.sp,
+            color = Color.Gray
+        )
+
+        Spacer(modifier = Modifier.height(50.dp))
+
+        val itemList = listOf( ItemData(1, "Mechanic", R.drawable.ic_plumbing),
+            ItemData(2, "Welding", R.drawable.ic_equipment),
+            ItemData(3, "Pipes", R.drawable.ic_repair),
+            ItemData(4, "Plumbing", R.drawable.ic_preventive),
+            ItemData(5, "Machinery", R.drawable.ic_align)
+        )
+        Row(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(start = 20.dp)
+        ) {
+            Text(
+                text = "Top-Rated Specialities",
+                modifier = Modifier.weight(1f),
+                fontSize = 18.sp,
+                color = Color(0xFF838383),
+                fontWeight = FontWeight.Bold
+            )
+
+            Spacer(modifier = Modifier.height(10.dp))
+        }
+
+        Row(
+            modifier = Modifier
+                .horizontalScroll(rememberScrollState())
+                .padding(start = 30.dp)
+        ) {
+            itemList.forEach { item ->
+                Item(item = item)
+                Spacer(modifier = Modifier.width(16.dp))
+            }
+        }
+
+        Spacer(modifier = Modifier.height(10.dp))
+
+        Row(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(start = 20.dp)
+        ) {
+            Text(
+                text = "Top-Rated Technicians",
+                modifier = Modifier.weight(1f),
+                fontSize = 18.sp,
+                color = Color(0xFF838383),
+                fontWeight = FontWeight.Bold
+            )
+
+            TextButton(
+                onClick = {navController.navigate("technicianList")},
+                modifier = Modifier.align(Alignment.CenterVertically),
+            ) {
+                Text(text = "See All")
+            }
+        }
+
+        Spacer(modifier = Modifier.height(15.dp))
+
+        if (technicians.isNotEmpty()) {
+            LazyRow(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .background(Color.White)
+            ) {
+                items(technicians) { technician ->
+                    TechnicianItem(technician) {
+                        navController.navigate("technicianDetails/${technician.name}")
+                    }
+
+                    Spacer(modifier =Modifier.width(8.dp))
+                }
+//                item {
+//                    Spacer(modifier = Modifier.height(60.dp))
+//                }
+            }
+        } else {
+            Image(painter = painterResource(id = R.drawable.not_found), contentDescription = "No Questions Found.",
+                modifier = Modifier
+                    .align(Alignment.CenterHorizontally)
+                    .size(260.dp))
+        }
+
+
+
+    }
+}
+
+@Composable
+fun TechnicianDetailsScreen(
+    viewModel: TechnicianListModel,
+    technician: Technician,
+    navController: NavController
+) {
+    viewModel.fetchTechnicians()
+
+    val firebaseAuth = FirebaseAuth.getInstance()
+    val currentUser = firebaseAuth.currentUser
+    val userId = currentUser?.uid ?: ""
+
+    Scaffold(
+        topBar = {
+            CustomTopAppBarWithBackButton(
+                navController = navController,
+                appBarTitle = "Question Thread",
+                backgroundColor = Color.White
+            )
+        },
+        backgroundColor = Color.White
+    ) {
+        it
+        Column(
+            modifier = Modifier.padding(16.dp)
+        ) {
+            Card(
                 modifier = Modifier
                     .fillMaxWidth()
+                    .padding(8.dp)
+                    .shadow(elevation = 1.dp)
             ) {
-                Text(text = "Access Maps")
+                Column(
+                    modifier = Modifier.padding(16.dp)
+                ) {
+                    Text(
+                        text = technician.name,
+                        style = MaterialTheme.typography.h6
+                    )
+
+                    Spacer(modifier = Modifier.height(10.dp))
+
+                    Text(
+                        text = technician.phone,
+                        style = MaterialTheme.typography.body2,
+                        color = Color(0xFF9E9E9E),
+                    )
+
+                    Spacer(modifier = Modifier.height(10.dp))
+                }
             }
+
+            Spacer(modifier = Modifier.height(8.dp))
         }
     }
 }

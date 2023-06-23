@@ -5,16 +5,17 @@ plugins {
     id 'com.google.android.libraries.mapsplatform.secrets-gradle-plugin'
     id 'dagger.hilt.android.plugin'
     id 'kotlin-kapt'
+    id 'org.jetbrains.kotlin.plugin.serialization' version '1.6.10'
 }
 
 android {
     namespace 'com.example.industrio'
-    compileSdk 33
+    compileSdk 34
 
     defaultConfig {
         applicationId "com.example.industrio"
         minSdk 24
-        targetSdk 33
+        targetSdk 34
         versionCode 1
         versionName "1.0"
 
@@ -115,6 +116,8 @@ dependencies {
     // Dagger - HILT
     implementation "com.google.dagger:hilt-android:2.38.1"
     implementation 'com.google.android.gms:play-services-location:21.0.1'
+    implementation 'androidx.core:core-ktx:+'
+    implementation 'androidx.paging:paging-compose:1.0.0-alpha14'
     kapt "com.google.dagger:hilt-compiler:2.38.1"
 
     testImplementation 'junit:junit:4.13.2'
@@ -128,6 +131,18 @@ dependencies {
 
     implementation 'com.google.accompanist:accompanist-drawablepainter:0.25.1'
     implementation "androidx.compose.runtime:runtime-livedata:$compose_ui_version"
+
+    //Algolia
+    implementation("com.algolia:algoliasearch-client-kotlin:2.0.0")
+    implementation("io.ktor:ktor-client-okhttp:2.0.1")
+    implementation("io.ktor:ktor-client-android:2.0.1")
+    implementation("io.ktor:ktor-client-cio:2.0.1")
+
+    implementation 'com.algolia:instantsearch-compose:3.+'
+    implementation 'com.algolia:instantsearch-android-paging3:3.+'
+    implementation 'androidx.lifecycle:lifecycle-viewmodel-ktx:2.+'
+    implementation 'androidx.lifecycle:lifecycle-livedata-ktx:2.+'
+    implementation 'androidx.compose.material:material-icons-extended:1.+'
 
 
 // OTP

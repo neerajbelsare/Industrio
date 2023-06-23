@@ -17,7 +17,9 @@ data class Reply(
     val text: String,
     val userId: String,
     val timestamp: Long
-)
+){
+    constructor() : this("", "", "", "", 0L)
+}
 
 
 
